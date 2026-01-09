@@ -5,7 +5,7 @@ console.log("📰 Latest Articles Script Starting...");
 const ARTICLES_JSON = '../data/articles.json';
 const MAX_RETRIES = 3;
 const MAX_ARTICLES_TO_SHOW = 3;
-const PAPER_FOLDER = 'paper/'; // Change this to your actual papers folder
+const PAPERS_FOLDER = 'papers/'; // Change this to your actual papers folder
 
 let isLoading = false;
 let retryCount = 0;
@@ -101,17 +101,34 @@ function displayArticles(articles) {
     
     const container = document.getElementById('latest-articles-container');
     
-    // Sort articles by published date (newest first)
-    const sortedArticles = [...articles].sort((a, b) => {
-        const dateA = new Date(a.published || '1970-01-01');
-        const dateB = new Date(b.published || '1970-01-01');
-        return dateB - dateA; // Newest first
+    // First, log all dates to debug
+    console.log("📅 All article dates:");
+    articles.forEach((article, index) => {
+        console.log(`${index + 1}. ${article.title}: ${article.published} (parsed: ${new Date(article.published)})`);
     });
     
-    // Take top N articles
+    // Sort articles by published date (newest first)
+    const sortedArticles = [...articles].sort((a, b) => {
+        // Parse dates
+        const dateA = new Date(a.published || '1970-01-01');
+        const dateB = new Date(b.published || '1970-01-01');
+        
+        // Log sorting comparison for debugging
+        console.log(`Sorting: ${a.title} (${dateA}) vs ${b.title} (${dateB}) = ${dateB - dateA}`);
+        
+        // Newest first (descending order)
+        return dateB - dateA;
+    });
+    
+    console.log("📊 Articles after sorting:");
+    sortedArticles.forEach((article, index) => {
+        console.log(`${index + 1}. ${article.title} - ${article.published}`);
+    });
+    
+    // Take top N articles (most recent)
     const topArticles = sortedArticles.slice(0, MAX_ARTICLES_TO_SHOW);
     
-    console.log(`📊 Top ${topArticles.length} articles after sorting:`, topArticles);
+    console.log(`🎯 Top ${topArticles.length} most recent articles:`, topArticles);
     
     if (topArticles.length === 0) {
         console.warn("⚠️ No valid articles to display");
@@ -124,7 +141,7 @@ function displayArticles(articles) {
     topArticles.forEach((article, index) => {
         const articleHTML = createArticleHTML(article);
         container.innerHTML += articleHTML;
-        console.log(`✅ Displayed article ${index + 1}: ${article.title}`);
+        console.log(`✅ Displayed article ${index + 1}: ${article.title} (${article.published})`);
         console.log(`   Article ID: ${article.article_id}`);
         console.log(`   PDF Path: ${getPdfPath(article)}`);
     });
@@ -141,10 +158,8 @@ function getPdfPath(article) {
         return '#';
     }
     
-    // Simple path: paper/IJACM_01_01_001.pdf
-    const pdfPath = `${PAPER_FOLDER}${articleId}.pdf`;
-    console.log(`📄 PDF path for ${article.title}: ${pdfPath}`);
-    
+    // Simple path: papers/IJACM_01_01_001.pdf
+    const pdfPath = `${PAPERS_FOLDER}${articleId}.pdf`;
     return pdfPath;
 }
 
@@ -165,7 +180,7 @@ function createArticleHTML(article) {
     return `
         <div class="article-card">
             <h3 class="article-title">${safeTitle}</h3>
-            <p class="article-authors">${safeAuthors}</p>
+            <p class="article-authors"><em>${safeAuthors}</em></p>
             <p class="article-date">
                 <i class="far fa-calendar-alt"></i> ${date}
             </p>
@@ -214,24 +229,24 @@ function showFallbackArticles() {
     
     const container = document.getElementById('latest-articles-container');
     
-    // Fallback based on your JSON structure
+    // Fallback based on your JSON structure - showing most recent dates
     const fallbackArticles = [
         { 
             title: "Trail1", 
             authors: "Sandeep", 
-            published: "2025-12-01",
+            published: "2025-12-01",  // Most recent
             article_id: "IJACM_01_01_001"
         },
         { 
             title: "Trail2", 
             authors: "Author2", 
-            published: "2025-11-01",
+            published: "2025-11-01",  // Second most recent
             article_id: "IJACM_01_01_002"
         },
         { 
             title: "Trail3", 
             authors: "Author3", 
-            published: "2025-10-01",
+            published: "2025-10-01",  // Third most recent
             article_id: "IJACM_01_01_003"
         }
     ];
@@ -261,11 +276,14 @@ function formatDisplayDate(dateString) {
         const date = new Date(dateString);
         
         if (!isNaN(date.getTime())) {
-            return date.toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-            });
+            // Format as "01 Dec 2025"
+            const day = date.getDate().toString().padStart(2, '0');
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const month = monthNames[date.getMonth()];
+            const year = date.getFullYear();
+            
+            return `${day} ${month} ${year}`;
         }
         
     } catch (error) {
@@ -341,6 +359,7 @@ if (!document.querySelector('#latest-articles-styles')) {
             margin: 0 0 5px 0;
             font-size: 14px;
             line-height: 1.4;
+            font-style: italic;
         }
         
         .article-date {
@@ -423,16 +442,29 @@ window.debugArticles = {
         console.clear();
         loadLatestArticles();
     },
-    testPDF: function(articleIndex = 0) {
-        const container = document.getElementById('latest-articles-container');
-        const articleCards = container.querySelectorAll('.article-card');
-        if (articleCards.length > articleIndex) {
-            const pdfLink = articleCards[articleIndex].querySelector('.pdf-button');
-            if (pdfLink) {
-                const url = pdfLink.getAttribute('href');
-                const title = articleCards[articleIndex].querySelector('.article-title').textContent;
-                checkAndOpenPdf(url, title);
-            }
+    testSorting: async function() {
+        try {
+            const response = await fetch(ARTICLES_JSON);
+            const articles = await response.json();
+            console.log("🧪 Testing date sorting...");
+            
+            // Show all articles with dates
+            articles.forEach((article, index) => {
+                const date = new Date(article.published);
+                console.log(`${index + 1}. ${article.title}: ${article.published} -> ${date}`);
+            });
+            
+            // Sort and show
+            const sorted = [...articles].sort((a, b) => {
+                return new Date(b.published) - new Date(a.published);
+            });
+            
+            console.log("\n📊 Sorted by date (newest first):");
+            sorted.forEach((article, index) => {
+                console.log(`${index + 1}. ${article.title}: ${article.published}`);
+            });
+        } catch (error) {
+            console.error("Error:", error);
         }
     },
     showCurrentArticles: function() {
@@ -441,9 +473,11 @@ window.debugArticles = {
         const articleCards = container.querySelectorAll('.article-card');
         articleCards.forEach((card, index) => {
             const title = card.querySelector('.article-title').textContent;
-            const pdfLink = card.querySelector('.pdf-button').getAttribute('href');
+            const authors = card.querySelector('.article-authors').textContent;
+            const date = card.querySelector('.article-date').textContent;
             console.log(`${index + 1}. ${title}`);
-            console.log(`   PDF: ${pdfLink}`);
+            console.log(`   Authors: ${authors}`);
+            console.log(`   Date: ${date}`);
         });
     }
 };
