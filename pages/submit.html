@@ -1,90 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Paper & Guidelines - IJACM</title>
-    <meta name="keywords"
-        content="advanced computing, mechanical systems, engineering research, open access journal, peer reviewed, IJACM">
-    <meta name="description"
-        content="Submit your research paper to IJACM. Review our guidelines and submission process.">
+    <title>Submit Paper - IJACM</title>
+    <meta name="keywords" content="IJACM, paper submission, research journal">
+    <meta name="description" content="Submit your research paper to IJACM">
     <meta name="reply-to" content="ijacmeditor@gmail.com">
     <meta name="contact" content="ijacmeditor@gmail.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* ================= GLOBAL STYLES ================= */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
         :root {
             --primary: #1a237e;
             --secondary: #00b0ff;
             --accent: #ff4081;
-            --accent-yellow: #ffc107;
             --bg-dark: #0b2c4d;
-            --bg-darker: #061a2f;
             --text-light: #f5f7ff;
             --text-muted: #b0bec5;
-            --white: #ffffff;
-            --gradient-primary: linear-gradient(135deg, #1a237e 0%, #283593 100%);
             --gradient-secondary: linear-gradient(135deg, #00b0ff 0%, #2979ff 100%);
-            --gradient-dark: linear-gradient(135deg, #0b2c4d 0%, #0d1b2a 100%);
             --radius-sm: 6px;
             --radius-md: 12px;
-            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
             --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.2);
-            --shadow-glow: 0 0 15px rgba(0, 176, 255, 0.3);
-            --transition-fast: 0.2s ease;
-            --transition-normal: 0.3s ease;
         }
-
+        
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
+        
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--bg-dark);
             color: var(--text-light);
             line-height: 1.6;
-            overflow-x: hidden;
         }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-            transition: var(--transition-fast);
-        }
-
-        ul {
-            list-style: none;
-        }
-
-        main {
-            padding: 20px;
-            min-height: 420px;
-        }
-
-        /* ================= PAGE SPECIFIC STYLES ================= */
+        
         .submit-page-wrapper {
             max-width: 900px;
             margin: 40px auto;
             padding: 0 20px;
         }
-
+        
         .submission-box {
-            background: rgba(13, 27, 42, 0.6);
-            backdrop-filter: blur(10px);
+            background: rgba(13, 27, 42, 0.8);
             padding: 40px;
             border-radius: var(--radius-md);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: var(--shadow-md);
         }
-
+        
         .submission-box h2 {
-            color: var(--white);
+            color: var(--text-light);
             text-align: center;
             margin-bottom: 30px;
             font-size: 2rem;
@@ -93,11 +63,7 @@
             justify-content: center;
             gap: 15px;
         }
-
-        .submission-box h2 i {
-            color: var(--secondary);
-        }
-
+        
         .submission-guide {
             text-align: center;
             color: var(--text-muted);
@@ -106,44 +72,28 @@
             background: rgba(255, 255, 255, 0.05);
             padding: 15px;
             border-radius: var(--radius-sm);
-            border-left: 4px solid var(--accent-yellow);
+            border-left: 4px solid #ffc107;
         }
-
-        .submission-guide a {
-            color: var(--secondary);
-            font-weight: 600;
-            text-decoration: underline;
-        }
-
-        /* Form Styles */
+        
         .form-section {
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .form-section:last-child {
-            border-bottom: none;
-        }
-
+        
         .form-section h3 {
-            color: var(--white);
+            color: var(--text-light);
             margin-bottom: 20px;
             font-size: 1.3rem;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
-        .form-section h3 i {
-            color: var(--accent);
-            font-size: 1.1rem;
-        }
-
+        
         .form-group {
             margin-bottom: 20px;
         }
-
+        
         .form-group label {
             display: block;
             font-weight: 500;
@@ -151,13 +101,7 @@
             margin-bottom: 8px;
             font-size: 0.95rem;
         }
-
-        .form-group label i {
-            color: var(--secondary);
-            margin-right: 8px;
-            width: 16px;
-        }
-
+        
         .form-group input[type="text"],
         .form-group input[type="email"],
         .form-group textarea {
@@ -167,24 +111,15 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--radius-sm);
             font-size: 0.95rem;
-            color: var(--white);
-            transition: var(--transition-fast);
+            color: var(--text-light);
+            transition: 0.2s ease;
             font-family: inherit;
         }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: var(--secondary);
-            outline: none;
-            background: rgba(0, 0, 0, 0.3);
-            box-shadow: 0 0 0 3px rgba(0, 176, 255, 0.1);
-        }
-
-        /* File Upload */
+        
         .file-upload {
             position: relative;
         }
-
+        
         .file-label {
             background: rgba(255, 255, 255, 0.05);
             border: 2px dashed rgba(255, 255, 255, 0.2);
@@ -196,33 +131,9 @@
             justify-content: center;
             gap: 10px;
             color: var(--text-muted);
-            transition: var(--transition-normal);
-            width: 100%;
+            transition: 0.3s ease;
         }
-
-        .file-upload input[type="file"] {
-            display: none;
-        }
-
-        .file-label:hover {
-            border-color: var(--secondary);
-            background: rgba(0, 176, 255, 0.05);
-            color: var(--white);
-        }
-
-        .file-label i {
-            font-size: 1.5rem;
-            color: var(--secondary);
-        }
-
-        .file-name {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: var(--accent-yellow);
-            text-align: center;
-        }
-
-        /* Checkboxes */
+        
         .checkbox-group {
             display: flex;
             align-items: flex-start;
@@ -232,29 +143,10 @@
             background: rgba(255, 255, 255, 0.02);
             border-radius: var(--radius-sm);
         }
-
-        .checkbox-group input {
-            margin-top: 5px;
-            cursor: pointer;
-            accent-color: var(--secondary);
-        }
-
-        .checkbox-group label {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-            cursor: pointer;
-            margin: 0;
-        }
-
-        .checkbox-group a {
-            color: var(--secondary);
-        }
-
-        /* Submit Button */
+        
         .submit-btn-form {
             background: var(--gradient-secondary);
-            color: var(--white);
+            color: white;
             border: none;
             padding: 16px 30px;
             border-radius: var(--radius-sm);
@@ -266,16 +158,10 @@
             justify-content: center;
             gap: 10px;
             width: 100%;
-            transition: var(--transition-normal);
-            box-shadow: var(--shadow-glow);
+            transition: 0.3s ease;
+            margin-top: 20px;
         }
-
-        .submit-btn-form:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 176, 255, 0.4);
-        }
-
-        /* Loading Animation */
+        
         .loading-spinner {
             display: none;
             width: 40px;
@@ -286,98 +172,166 @@
             animation: spin 1s ease-in-out infinite;
             margin: 20px auto;
         }
-
+        
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        /* Success Message */
-        .success-message {
+        
+        /* SUCCESS MESSAGE - FIXED LAYOUT */
+        .success-container {
             text-align: center;
-            padding: 40px;
+            padding: 30px;
             animation: fadeIn 0.5s ease;
         }
-
-        .success-message i {
+        
+        .success-icon {
             font-size: 4rem;
             color: #4caf50;
             margin-bottom: 20px;
         }
-
-        .success-message h2 {
-            color: var(--white);
-            margin-bottom: 15px;
+        
+        .success-title {
+            color: var(--text-light);
+            font-size: 2rem;
+            margin-bottom: 20px;
         }
-
-        /* Status Message */
-        .status-message {
-            padding: 15px;
-            border-radius: var(--radius-sm);
-            margin: 20px 0;
+        
+        .paper-id-box {
+            background: rgba(0, 176, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--secondary);
+            margin: 25px 0;
             text-align: center;
-            display: none;
         }
-
-        .status-message.success {
-            background: rgba(76, 175, 80, 0.1);
-            border: 1px solid rgba(76, 175, 80, 0.3);
-            color: #4caf50;
+        
+        .paper-id-label {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
         }
-
-        .status-message.error {
-            background: rgba(244, 67, 54, 0.1);
-            border: 1px solid rgba(244, 67, 54, 0.3);
-            color: #f44336;
+        
+        .paper-id-value {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            font-weight: bold;
+            font-family: monospace;
+            letter-spacing: 1px;
         }
-
-        /* Responsive Design */
+        
+        .timeline {
+            text-align: left;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .timeline-item {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .timeline-icon {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--secondary);
+        }
+        
+        .notes-box {
+            background: rgba(255, 193, 7, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+            margin: 25px 0;
+            text-align: left;
+        }
+        
+        .notes-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .notes-box li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .notes-box li:before {
+            content: "•";
+            color: #ffc107;
+            position: absolute;
+            left: 0;
+            font-size: 1.5rem;
+        }
+        
+        .submit-another-btn {
+            padding: 12px 30px;
+            background: var(--gradient-secondary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .contact-info {
+            margin-top: 30px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         @media (max-width: 768px) {
             .submit-page-wrapper {
                 margin: 20px auto;
                 padding: 0 15px;
             }
-
+            
             .submission-box {
                 padding: 25px 15px;
             }
-
-            .submission-box h2 {
-                font-size: 1.6rem;
+            
+            .success-title {
+                font-size: 1.5rem;
             }
-
-            .form-section h3 {
+            
+            .paper-id-value {
                 font-size: 1.2rem;
-            }
-
-            .checkbox-group {
-                align-items: flex-start;
-            }
-
-            .checkbox-group input {
-                margin-top: 6px;
             }
         }
     </style>
 </head>
-
 <body>
-
     <div id="header-placeholder"></div>
     <div id="navbar-placeholder"></div>
 
     <main class="submit-page-wrapper">
-        <div class="submission-box">
+        <div class="submission-box" id="submissionContainer">
             <h2><i class="fas fa-paper-plane"></i> Submit Your Paper</h2>
             <p class="submission-guide">
-                Please fill in the details below. Ensure your paper follows the
-                <a href="author-guidelines.html" target="_blank">Author Guidelines</a> before submission.
+                Please fill in the details below. Ensure your paper follows the author guidelines before submission.
                 <br><small>Maximum file size: 5MB | Accepted formats: PDF, DOC, DOCX</small>
                 <br><small>All correspondence: <strong>ijacmeditor@gmail.com</strong></small>
             </p>
 
-            <div id="statusMessage" class="status-message"></div>
-
-            <form id="submissionForm" method="POST" enctype="multipart/form-data">
+            <form id="submissionForm">
                 <!-- User Info -->
                 <div class="form-section">
                     <h3><i class="fas fa-user-circle"></i> Submitter Details</h3>
@@ -387,8 +341,7 @@
                     </div>
                     <div class="form-group">
                         <label for="submitterEmail"><i class="fas fa-envelope"></i> Email Address *</label>
-                        <input type="email" id="submitterEmail" name="email" required
-                            placeholder="your.email@example.com">
+                        <input type="email" id="submitterEmail" name="email" required placeholder="your.email@example.com">
                     </div>
                 </div>
 
@@ -397,18 +350,15 @@
                     <h3><i class="fas fa-file-alt"></i> Paper Information</h3>
                     <div class="form-group">
                         <label for="paperTitle"><i class="fas fa-heading"></i> Paper Title *</label>
-                        <input type="text" id="paperTitle" name="paper_title" required
-                            placeholder="Full title of the manuscript">
+                        <input type="text" id="paperTitle" name="paper_title" required placeholder="Full title of the manuscript">
                     </div>
                     <div class="form-group">
                         <label for="paperAbstract"><i class="fas fa-align-left"></i> Abstract *</label>
-                        <textarea id="paperAbstract" name="abstract" rows="5" required
-                            placeholder="Brief abstract (200-300 words)"></textarea>
+                        <textarea id="paperAbstract" name="abstract" rows="5" required placeholder="Brief abstract (200-300 words)"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="paperKeywords"><i class="fas fa-tags"></i> Keywords *</label>
-                        <input type="text" id="paperKeywords" name="keywords" required
-                            placeholder="Comma separated keywords (e.g., AI, Mechanics, IoT)">
+                        <input type="text" id="paperKeywords" name="keywords" required placeholder="Comma separated keywords">
                     </div>
                 </div>
 
@@ -417,8 +367,7 @@
                     <h3><i class="fas fa-users"></i> Authors & Affiliations</h3>
                     <div class="form-group">
                         <label for="paperAuthors"><i class="fas fa-list"></i> Author List *</label>
-                        <textarea id="paperAuthors" name="authors" rows="3" required
-                            placeholder="List of all authors with affiliations (Format: First Author, Affiliation; Second Author, Affiliation; etc.)"></textarea>
+                        <textarea id="paperAuthors" name="authors" rows="3" required placeholder="List all authors with affiliations"></textarea>
                     </div>
                 </div>
 
@@ -443,16 +392,15 @@
                     <h3><i class="fas fa-check-double"></i> Declaration</h3>
                     <div class="checkbox-group">
                         <input type="checkbox" id="decl1" name="declaration_original" required>
-                        <label for="decl1">I confirm this is original work not published elsewhere and has not been submitted to another journal.</label>
+                        <label for="decl1">I confirm this is original work not published elsewhere.</label>
                     </div>
                     <div class="checkbox-group">
                         <input type="checkbox" id="decl2" name="declaration_terms" required>
-                        <label for="decl2">I agree to the <a href="plagiarism-policy.html" target="_blank">Plagiarism
-                                Policy</a> & <a href="copyright.html" target="_blank">Copyright Terms</a>.</label>
+                        <label for="decl2">I agree to the plagiarism policy & copyright terms.</label>
                     </div>
                     <div class="checkbox-group">
                         <input type="checkbox" id="decl3" name="declaration_ethics" required>
-                        <label for="decl3">I confirm that all ethical guidelines have been followed and all authors have approved the submission.</label>
+                        <label for="decl3">I confirm all ethical guidelines have been followed.</label>
                     </div>
                 </div>
 
@@ -466,157 +414,92 @@
     </main>
 
     <div id="footer-placeholder"></div>
-    <script src="../script.js"></script>
+    
     <script>
-        // Your Google Apps Script Web App URL
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxihoeURdTiKhVX2CZcV3LfoajRPXLwmIa2pDTEdW5PrlmIKevhe1Dq7ZqyMvX-Id_FNQ/exec';
-
-        // Show status message
-        function showStatus(message, type = 'info') {
-            const statusDiv = document.getElementById('statusMessage');
-            statusDiv.textContent = message;
-            statusDiv.className = `status-message ${type}`;
-            statusDiv.style.display = 'block';
-            
-            if (type === 'error' || type === 'success') {
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 5000);
-            }
-        }
-
+        // UPDATE THIS URL WITH YOUR NEW DEPLOYMENT URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzv-1Ptl_2VCoa4TNHr3MQnEhaYpOLAC-ZaiXQ5hBMEjM0Y1G9rQ1cGe8xhmAzFVSZ3Qw/exec';
+        
         // File name display
         document.getElementById('paperFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
-            const fileNameDiv = document.getElementById('fileName');
-            
             if (file) {
-                // Validate file size
-                if (file.size > 5 * 1024 * 1024) {
-                    showStatus('File is too large. Maximum size is 5 MB.', 'error');
-                    this.value = '';
-                    fileNameDiv.textContent = '';
-                    return;
-                }
-                
-                // Validate file type
-                const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-                if (!validTypes.includes(file.type)) {
-                    showStatus('Invalid file type. Please upload PDF, DOC, or DOCX only.', 'error');
-                    this.value = '';
-                    fileNameDiv.textContent = '';
-                    return;
-                }
-                
-                fileNameDiv.textContent = 'Selected: ' + file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
-                showStatus(`✓ File ready: ${file.name}`, 'success');
-            } else {
-                fileNameDiv.textContent = '';
+                document.getElementById('fileName').textContent = 'Selected: ' + file.name;
             }
         });
-
-        // Form validation
-        function validateForm() {
-            const form = document.getElementById('submissionForm');
-            
-            // Check required fields
-            const requiredFields = form.querySelectorAll('[required]');
-            for (let field of requiredFields) {
-                if (!field.value.trim()) {
-                    showStatus(`Please fill in ${field.previousElementSibling.textContent}`, 'error');
-                    field.focus();
-                    return false;
-                }
-            }
-            
-            // Check file
-            const fileInput = document.getElementById('paperFile');
-            if (!fileInput.files[0]) {
-                showStatus('Please select a file to upload.', 'error');
-                return false;
-            }
-            
-            // Check checkboxes
-            const checkboxes = form.querySelectorAll('input[type="checkbox"][required]');
-            for (let checkbox of checkboxes) {
-                if (!checkbox.checked) {
-                    showStatus('Please agree to all declarations.', 'error');
-                    return false;
-                }
-            }
-            
-            return true;
-        }
-
+        
         // Form submission handler
         document.getElementById('submissionForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
-            // Validate form
-            if (!validateForm()) {
+            
+            // Basic validation
+            if (!this.checkValidity()) {
+                this.reportValidity();
                 return;
             }
-
+            
             const fileInput = document.getElementById('paperFile');
             const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file to upload.');
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File is too large. Maximum size is 5 MB.');
+                return;
+            }
             
             // Show loading state
             const submitBtn = document.getElementById('submitButton');
             const loadingSpinner = document.getElementById('loadingSpinner');
-            const originalBtnContent = submitBtn.innerHTML;
-            
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading & Processing...';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
             loadingSpinner.style.display = 'block';
-            showStatus('Uploading your submission. Please wait...', 'info');
-
+            
             try {
                 // Convert file to base64
                 const fileBase64 = await toBase64(file);
                 
-                // Prepare form data for Google Apps Script
+                // Prepare form data
                 const formData = new FormData();
-                formData.append('name', document.getElementById('submitterName').value.trim());
-                formData.append('email', document.getElementById('submitterEmail').value.trim());
-                formData.append('paper_title', document.getElementById('paperTitle').value.trim());
-                formData.append('abstract', document.getElementById('paperAbstract').value.trim());
-                formData.append('keywords', document.getElementById('paperKeywords').value.trim());
-                formData.append('authors', document.getElementById('paperAuthors').value.trim());
+                formData.append('name', document.getElementById('submitterName').value);
+                formData.append('email', document.getElementById('submitterEmail').value);
+                formData.append('paper_title', document.getElementById('paperTitle').value);
+                formData.append('abstract', document.getElementById('paperAbstract').value);
+                formData.append('keywords', document.getElementById('paperKeywords').value);
+                formData.append('authors', document.getElementById('paperAuthors').value);
                 formData.append('declaration_original', document.getElementById('decl1').checked ? 'Yes' : 'No');
                 formData.append('declaration_terms', document.getElementById('decl2').checked ? 'Yes' : 'No');
                 formData.append('declaration_ethics', document.getElementById('decl3').checked ? 'Yes' : 'No');
                 formData.append('fileName', file.name);
                 formData.append('fileType', file.type);
-                formData.append('fileData', fileBase64.split(',')[1]); // Remove data URL prefix
-                formData.append('submission_date', new Date().toISOString());
-
-                // Send to Google Apps Script
-                showStatus('Processing submission...', 'info');
+                formData.append('fileData', fileBase64.split(',')[1]);
                 
+                // Send to Google Apps Script
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     body: formData,
-                    mode: 'no-cors' // Required for Google Apps Script
+                    mode: 'no-cors'
                 });
-
-                // Since we use no-cors, we can't read the response directly
-                // But we'll assume success if no error occurs
-                setTimeout(() => {
-                    showSuccessMessage();
-                }, 2000);
-
+                
+                // Generate a temporary Paper ID for display (real one comes from script)
+                const tempPaperId = 'IJACM-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                
+                // Show success message
+                showSuccessMessage(tempPaperId);
+                
             } catch (error) {
-                console.error('Submission error:', error);
-                showStatus('Submission failed: ' + error.message + '. Please try again or email ijacmeditor@gmail.com', 'error');
+                console.error('Error:', error);
+                alert('Submission failed. Please try again or email ijacmeditor@gmail.com');
                 
                 // Reset button
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnContent;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Manuscript';
                 loadingSpinner.style.display = 'none';
             }
         });
-
-        // Function to convert file to base64
+        
         function toBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -625,102 +508,61 @@
                 reader.onerror = error => reject(error);
             });
         }
-
-        // Show success message
-        function showSuccessMessage() {
-            const submissionBox = document.querySelector('.submission-box');
-            const randomPaperId = 'IJACM-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-            
-            submissionBox.innerHTML = `
-                <div class="success-message">
-                    <i class="fas fa-check-circle"></i>
-                    <h2>Submission Successful! 🎉</h2>
-                    <div style="background: rgba(0, 176, 255, 0.1); padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid var(--secondary);">
-                        <p style="font-size: 1.1rem; color: var(--text-light); line-height: 1.6; margin-bottom: 10px;">
-                            <strong>Your paper has been submitted to IJACM!</strong>
-                        </p>
-                        <p style="color: var(--secondary); font-size: 1.2rem; font-weight: bold;">
-                            <i class="fas fa-id-card"></i> Reference ID: ${randomPaperId}
-                        </p>
+        
+        function showSuccessMessage(paperId) {
+            const container = document.getElementById('submissionContainer');
+            container.innerHTML = `
+                <div class="success-container">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
                     </div>
                     
-                    <div style="text-align: left; color: var(--text-light); line-height: 1.6; margin: 25px 0;">
-                        <h3 style="color: var(--secondary); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-envelope"></i> What Happens Next?
-                        </h3>
-                        <ul style="list-style: none; padding-left: 10px;">
-                            <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                                <i class="fas fa-check" style="color: #4caf50; position: absolute; left: 0;"></i>
-                                <strong>Immediate:</strong> Confirmation email sent to your inbox (check spam folder)
-                            </li>
-                            <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                                <i class="fas fa-clock" style="color: #ff9800; position: absolute; left: 0;"></i>
-                                <strong>Within 48 hours:</strong> Initial editorial check & paper ID assignment
-                            </li>
-                            <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                                <i class="fas fa-users" style="color: #9c27b0; position: absolute; left: 0;"></i>
-                                <strong>1-2 weeks:</strong> Peer review assignment
-                            </li>
-                            <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                                <i class="fas fa-file-alt" style="color: #00bcd4; position: absolute; left: 0;"></i>
-                                <strong>4-6 weeks:</strong> Review process completion
-                            </li>
+                    <h2 class="success-title">Submission Successful!</h2>
+                    
+                    <div class="paper-id-box">
+                        <div class="paper-id-label">Your Paper Reference ID:</div>
+                        <div class="paper-id-value">${paperId}</div>
+                    </div>
+                    
+                    <div class="timeline">
+                        <h3 style="color: var(--secondary); margin-bottom: 15px;">What Happens Next:</h3>
+                        <div class="timeline-item">
+                            <i class="fas fa-envelope timeline-icon"></i>
+                            <strong>Immediate:</strong> Confirmation email sent to your inbox (check spam folder)
+                        </div>
+                        <div class="timeline-item">
+                            <i class="fas fa-clock timeline-icon"></i>
+                            <strong>Within 48 hours:</strong> Initial editorial check & paper ID assignment
+                        </div>
+                        <div class="timeline-item">
+                            <i class="fas fa-users timeline-icon"></i>
+                            <strong>1-2 weeks:</strong> Peer review assignment
+                        </div>
+                        <div class="timeline-item">
+                            <i class="fas fa-calendar-check timeline-icon"></i>
+                            <strong>4-6 weeks:</strong> Review process completion
+                        </div>
+                    </div>
+                    
+                    <div class="notes-box">
+                        <h3 style="color: #ffc107; margin-bottom: 15px;">Important Notes:</h3>
+                        <ul>
+                            <li>All correspondence: <strong>ijacmeditor@gmail.com</strong></li>
+                            <li>Quote your Paper ID (<strong>${paperId}</strong>) in all emails</li>
+                            <li>Save this reference ID for tracking</li>
                         </ul>
                     </div>
                     
-                    <div style="background: rgba(255, 193, 7, 0.1); padding: 20px; border-radius: 10px; margin: 25px 0; border-left: 4px solid var(--accent-yellow);">
-                        <h3 style="color: var(--accent-yellow); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-exclamation-circle"></i> Important Notes
-                        </h3>
-                        <ul style="text-align: left; color: var(--text-muted); list-style: none; padding-left: 10px;">
-                            <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
-                                <i class="fas fa-envelope" style="position: absolute; left: 0;"></i>
-                                All correspondence: <strong>ijacmeditor@gmail.com</strong>
-                            </li>
-                            <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
-                                <i class="fas fa-id-badge" style="position: absolute; left: 0;"></i>
-                                Quote your Paper ID in all emails
-                            </li>
-                            <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
-                                <i class="fas fa-save" style="position: absolute; left: 0;"></i>
-                                Save this reference ID for tracking
-                            </li>
-                        </ul>
-                    </div>
+                    <button onclick="location.reload()" class="submit-another-btn">
+                        <i class="fas fa-plus"></i> Submit Another Paper
+                    </button>
                     
-                    <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                        <button onclick="location.reload()" style="padding: 12px 30px; background: var(--gradient-secondary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-plus"></i> Submit Another Paper
-                        </button>
-                        <button onclick="window.location.href='index.html'" style="padding: 12px 30px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-home"></i> Return to Home
-                        </button>
-                    </div>
-                    
-                    <p style="margin-top: 30px; color: var(--text-muted); font-size: 0.9rem;">
+                    <div class="contact-info">
                         <i class="fas fa-info-circle"></i> Need help? Email: <strong>ijacmeditor@gmail.com</strong>
-                    </p>
+                    </div>
                 </div>
             `;
         }
-
-        // Add animations styles
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(20px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
