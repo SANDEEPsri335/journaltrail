@@ -5,7 +5,7 @@ console.log("📰 Latest Articles Script Starting...");
 const ARTICLES_JSON = '../data/articles.json';
 const MAX_RETRIES = 3;
 const MAX_ARTICLES_TO_SHOW = 3;
-const PAPERS_FOLDER = 'paper/';
+const PAPERS_FOLDER = 'papers/'; // Adjust this to your actual folder name
 
 let isLoading = false;
 let retryCount = 0;
@@ -82,6 +82,7 @@ async function fetchArticlesWithRetry() {
         
         const data = await response.json();
         console.log("✅ Data fetched successfully");
+        console.log("Sample article structure:", data[0]); // Debug: Show first article
         
         if (!Array.isArray(data)) {
             console.warn("⚠️ Data is not an array:", typeof data);
@@ -126,6 +127,7 @@ function displayArticles(articles) {
         const articleHTML = createArticleHTML(article);
         container.innerHTML += articleHTML;
         console.log(`✅ Displayed article ${index + 1}: ${article.Title || article.title}`);
+        console.log(`   PDF Path: ${getPdfPath(article)}`);
     });
     
     console.log("✅ All articles displayed successfully");
@@ -179,19 +181,63 @@ function parseCustomDate(dateString) {
 }
 
 function getPdfPath(article) {
-    // Use DOI or create from title for PDF path
-    let pdfId = article.DOI || article.doi || '';
+    // Try to get paper ID from different possible fields
+    // Common field names: paper_id, article_id, id, file_name, pdf_name, doi
+    let paperId = '';
     
-    if (!pdfId && article.Title) {
-        // Create a simple ID from title
-        pdfId = article.Title.toLowerCase()
+    // Check various possible field names for paper ID
+    const possibleIdFields = [
+        'paper_id',
+        'article_id',
+        'id',
+        'paperId',
+        'articleId',
+        'file_name',
+        'pdf_name',
+        'pdf',
+        'file',
+        'doi',
+        'DOI'
+    ];
+    
+    for (const field of possibleIdFields) {
+        if (article[field]) {
+            paperId = article[field];
+            console.log(`Found paper ID in field "${field}": ${paperId}`);
+            break;
+        }
+    }
+    
+    // If no paper ID found, try to extract from DOI
+    if (!paperId && (article.doi || article.DOI)) {
+        const doi = article.doi || article.DOI;
+        // Extract last part of DOI for filename
+        const doiParts = doi.split('/');
+        if (doiParts.length > 0) {
+            paperId = doiParts[doiParts.length - 1];
+            console.log(`Extracted paper ID from DOI: ${paperId}`);
+        }
+    }
+    
+    // If still no ID, create from title
+    if (!paperId && (article.Title || article.title)) {
+        const title = article.Title || article.title;
+        paperId = title.toLowerCase()
             .replace(/[^a-z0-9]/g, '_')
             .replace(/_+/g, '_')
             .replace(/^_|_$/g, '');
+        console.log(`Created paper ID from title: ${paperId}`);
     }
     
-    // Use your papers folder path
-    return `${PAPERS_FOLDER}${pdfId}.pdf`;
+    // Add .pdf extension if not present
+    if (paperId && !paperId.toLowerCase().endsWith('.pdf')) {
+        paperId += '.pdf';
+    }
+    
+    // Return the full path
+    const pdfPath = `${PAPERS_FOLDER}${paperId}`;
+    console.log(`Final PDF path: ${pdfPath}`);
+    return pdfPath;
 }
 
 function createArticleHTML(article) {
@@ -203,22 +249,27 @@ function createArticleHTML(article) {
     const pdfUrl = getPdfPath(article);
     const viewMoreUrl = 'pages/current-issue.html';
     
+    // Escape HTML for safety
+    const safeTitle = escapeHtml(title);
+    const safeAuthors = escapeHtml(authors);
+    const safePdfUrl = escapeHtml(pdfUrl);
+    
     return `
         <div class="article-card">
-            <h3 class="article-title">${escapeHtml(title)}</h3>
-            <p class="article-authors">${escapeHtml(authors)}</p>
-            <p style="color: #666; font-size: 14px; margin-top: 5px;">
+            <h3 class="article-title">${safeTitle}</h3>
+            <p class="article-authors">${safeAuthors}</p>
+            <p class="article-date">
                 <i class="far fa-calendar-alt"></i> ${date}
             </p>
-            <div style="margin-top: 15px; display: flex; gap: 10px;">
-                <a href="${pdfUrl}" 
+            <div class="article-actions">
+                <a href="${safePdfUrl}" 
                    target="_blank" 
-                   onclick="return checkPdfExists('${pdfUrl}', '${escapeHtml(title)}')"
-                   style="background: #0b5ed7; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; cursor: pointer;">
+                   class="pdf-button"
+                   onclick="event.preventDefault(); checkAndOpenPdf('${safePdfUrl}', '${safeTitle.replace(/'/g, "\\'")}')">
                     <i class="fas fa-file-pdf"></i> PDF
                 </a>
                 <a href="${viewMoreUrl}" 
-                   style="background: #6c757d; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; cursor: pointer;">
+                   class="view-more-button">
                     <i class="fas fa-external-link-alt"></i> View More
                 </a>
             </div>
@@ -226,9 +277,27 @@ function createArticleHTML(article) {
     `;
 }
 
-function checkPdfExists(url, title) {
-    console.log(`Opening PDF: ${url}`);
-    window.open(url, '_blank');
+// Function to check and open PDF
+function checkAndOpenPdf(url, title) {
+    console.log(`📄 Attempting to open PDF: ${url}`);
+    
+    // First check if PDF exists
+    fetch(url, { method: 'HEAD' })
+        .then(response => {
+            if (response.ok) {
+                console.log(`✅ PDF found: ${url}`);
+                // Open PDF in new tab
+                window.open(url, '_blank');
+            } else {
+                console.error(`❌ PDF not found (${response.status}): ${url}`);
+                alert(`PDF not found for: ${title}\n\nPlease check the file path:\n${url}`);
+            }
+        })
+        .catch(error => {
+            console.error(`❌ Error checking PDF: ${error.message}`);
+            alert(`Cannot access PDF for: ${title}\n\nError: ${error.message}\n\nPath: ${url}`);
+        });
+    
     return false;
 }
 
@@ -237,25 +306,25 @@ function showFallbackArticles() {
     
     const container = document.getElementById('latest-articles-container');
     
-    // Fallback based on your screenshot - showing 3 most recent articles
+    // Fallback based on your screenshot
     const fallbackArticles = [
         { 
             Title: "Trails", 
             Author: "Karan, Vishnu", 
             Published: "Dec 24, 2026",
-            DOI: "10.1007/s40430-020-02750-7"
+            paper_id: "trails_2026.pdf"  // Example paper ID
         },
         { 
             Title: "Trail2", 
             Author: "VVVV", 
             Published: "Mar 11, 2026",
-            DOI: "10.1007/s40430-020-02750-8"
+            paper_id: "trail2_2026.pdf"  // Example paper ID
         },
         { 
             Title: "Trail4", 
             Author: "Ram, Ravi, Hari", 
             Published: "Jun 19, 2026",
-            DOI: "10.1007/s40430-020-02750-5"
+            paper_id: "trail4_2026.pdf"  // Example paper ID
         }
     ];
     
@@ -270,9 +339,9 @@ function showFallbackArticles() {
 
 function getLoadingHTML() {
     return `
-        <div style="text-align:center; width:100%; grid-column: 1 / -1; color:#fff; padding: 40px;">
-            <div style="border: 3px solid rgba(255, 255, 255, 0.1); border-top: 3px solid #00b0ff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
-            <p style="color: #00b0ff;">Loading latest articles...</p>
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Loading latest articles...</p>
         </div>
     `;
 }
@@ -310,7 +379,7 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Add CSS for loading animation
+// Add CSS styles
 if (!document.querySelector('#latest-articles-styles')) {
     const style = document.createElement('style');
     style.id = 'latest-articles-styles';
@@ -318,6 +387,28 @@ if (!document.querySelector('#latest-articles-styles')) {
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        
+        .loading-container {
+            text-align: center;
+            width: 100%;
+            grid-column: 1 / -1;
+            padding: 40px;
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #00b0ff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        .loading-text {
+            color: #00b0ff;
+            font-size: 16px;
         }
         
         .article-card {
@@ -348,6 +439,58 @@ if (!document.querySelector('#latest-articles-styles')) {
             font-size: 14px;
             line-height: 1.4;
         }
+        
+        .article-date {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .article-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .pdf-button {
+            background: #0b5ed7;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .pdf-button:hover {
+            background: #0a58ca;
+            text-decoration: none;
+        }
+        
+        .view-more-button {
+            background: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .view-more-button:hover {
+            background: #5c636a;
+            text-decoration: none;
+        }
+        
+        .fa-file-pdf, .fa-external-link-alt {
+            font-size: 14px;
+        }
     `;
     document.head.appendChild(style);
 }
@@ -364,5 +507,35 @@ window.addEventListener('load', function() {
         }
     }, 2000);
 });
+
+// Debug functions
+window.debugArticles = {
+    reload: function() {
+        console.clear();
+        loadLatestArticles();
+    },
+    testPDF: function(articleIndex = 0) {
+        const container = document.getElementById('latest-articles-container');
+        const articleCard = container.querySelectorAll('.article-card')[articleIndex];
+        if (articleCard) {
+            const pdfLink = articleCard.querySelector('.pdf-button');
+            if (pdfLink) {
+                const url = pdfLink.getAttribute('href');
+                const title = articleCard.querySelector('.article-title').textContent;
+                checkAndOpenPdf(url, title);
+            }
+        }
+    },
+    showData: async function() {
+        try {
+            const response = await fetch(ARTICLES_JSON);
+            const data = await response.json();
+            console.log("📊 Full JSON data:", data);
+            console.log("📋 First article fields:", Object.keys(data[0] || {}));
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
+};
 
 console.log("📰 Latest Articles Script Loaded Successfully!");
