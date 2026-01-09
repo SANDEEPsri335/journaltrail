@@ -138,7 +138,7 @@ function showFallbackArticles(container) {
     
     // Hardcoded fallback data from your JSON
     const fallbackArticles = [
-        {
+        <!--{
             title: "Trail6",
             authors: "Karan, Vishnu",
             published: "2026-12-24",
@@ -155,7 +155,7 @@ function showFallbackArticles(container) {
             authors: "VVVV",
             published: "2026-03-11",
             article_id: "IJACM_16_06_025"
-        }
+        }-->
     ];
     
     displayArticles(fallbackArticles, container);
