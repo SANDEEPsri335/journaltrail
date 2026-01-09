@@ -5,7 +5,7 @@ console.log("📰 Latest Articles Script Starting...");
 const ARTICLES_JSON = '../data/articles.json';
 const MAX_RETRIES = 3;
 const MAX_ARTICLES_TO_SHOW = 3;
-const PAPERS_FOLDER = 'paper/'; // CHANGE THIS to your actual folder path
+const PAPERS_FOLDER = 'paper/';
 
 let isLoading = false;
 let retryCount = 0;
@@ -47,12 +47,11 @@ async function loadLatestArticles() {
             showFallbackArticles();
         }
         
-        retryCount = 0; // Reset retry count on success
+        retryCount = 0;
         
     } catch (error) {
         console.error("❌ Error loading articles:", error);
         
-        // Try fallback after error
         if (retryCount < MAX_RETRIES) {
             retryCount++;
             console.log(`🔄 Retrying (${retryCount}/${MAX_RETRIES})...`);
@@ -67,7 +66,6 @@ async function loadLatestArticles() {
 
 async function fetchArticlesWithRetry() {
     try {
-        // Add timestamp to prevent caching issues
         const response = await fetch(`${ARTICLES_JSON}?t=${Date.now()}`, {
             method: 'GET',
             headers: {
@@ -105,8 +103,9 @@ function displayArticles(articles) {
     
     // Sort articles by published date (newest first)
     const sortedArticles = [...articles].sort((a, b) => {
-        const dateA = new Date(a.published || '1970-01-01');
-        const dateB = new Date(b.published || '1970-01-01');
+        // Handle different date formats
+        const dateA = parseCustomDate(a.Published || a.published || '1970-01-01');
+        const dateB = parseCustomDate(b.Published || b.published || '1970-01-01');
         return dateB - dateA; // Newest first
     });
     
@@ -126,37 +125,83 @@ function displayArticles(articles) {
     topArticles.forEach((article, index) => {
         const articleHTML = createArticleHTML(article);
         container.innerHTML += articleHTML;
-        console.log(`✅ Displayed article ${index + 1}: ${article.title}`);
-        console.log(`   PDF path: ${getPdfPath(article)}`);
+        console.log(`✅ Displayed article ${index + 1}: ${article.Title || article.title}`);
     });
     
     console.log("✅ All articles displayed successfully");
 }
 
+function parseCustomDate(dateString) {
+    if (!dateString) return new Date('1970-01-01');
+    
+    try {
+        // Format: "Dec 24, 2026" (from your screenshot)
+        if (dateString.includes(',')) {
+            const parts = dateString.split(' ');
+            if (parts.length === 3) {
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const month = monthNames.indexOf(parts[0]) + 1;
+                const day = parseInt(parts[1].replace(',', ''), 10);
+                const year = parseInt(parts[2], 10);
+                
+                if (month > 0 && !isNaN(day) && !isNaN(year)) {
+                    return new Date(year, month - 1, day);
+                }
+            }
+        }
+        
+        // Format: "YYYY-MM-DD"
+        if (dateString.includes('-')) {
+            const parts = dateString.split('-');
+            if (parts.length === 3) {
+                const year = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10);
+                const day = parseInt(parts[2], 10);
+                
+                if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+                    return new Date(year, month - 1, day);
+                }
+            }
+        }
+        
+        // Try default Date parsing
+        const date = new Date(dateString);
+        if (!isNaN(date.getTime())) {
+            return date;
+        }
+        
+    } catch (error) {
+        console.warn("⚠️ Date parsing error for:", dateString, error);
+    }
+    
+    return new Date('1970-01-01');
+}
+
 function getPdfPath(article) {
-    // Adjust this based on your folder structure
-    const articleId = article.article_id || '';
+    // Use DOI or create from title for PDF path
+    let pdfId = article.DOI || article.doi || '';
     
-    // Try different possible paths
-    const possiblePaths = [
-        `paper/${articleId}.pdf`,           // papers/IJACM_16_06_025.pdf
-        `../paper/${articleId}.pdf`,        // ../papers/IJACM_16_06_025.pdf
-        `./paper/${articleId}.pdf`,         // ./papers/IJACM_16_06_025.pdf
-        `/paper/${articleId}.pdf`,          // /papers/IJACM_16_06_025.pdf
-        `assets/paper/${articleId}.pdf`,    // assets/papers/IJACM_16_06_025.pdf
-        `../assets/paper/${articleId}.pdf`  // ../assets/papers/IJACM_16_06_025.pdf
-    ];
+    if (!pdfId && article.Title) {
+        // Create a simple ID from title
+        pdfId = article.Title.toLowerCase()
+            .replace(/[^a-z0-9]/g, '_')
+            .replace(/_+/g, '_')
+            .replace(/^_|_$/g, '');
+    }
     
-    return possiblePaths[0]; // Change index based on your structure
+    // Use your papers folder path
+    return `${PAPERS_FOLDER}${pdfId}.pdf`;
 }
 
 function createArticleHTML(article) {
-    // Extract data from JSON
-    const title = article.title || 'Untitled Article';
-    const authors = article.authors || 'Unknown Author';
-    const date = formatDate(article.published);
+    // Extract data - handle both uppercase and lowercase field names
+    const title = article.Title || article.title || 'Untitled Article';
+    const authors = article.Author || article.author || 'Unknown Author';
+    const publishedDate = article.Published || article.published || '';
+    const date = formatDisplayDate(publishedDate);
     const pdfUrl = getPdfPath(article);
-    const viewMoreUrl = 'pages/current-issue.html'; // Current issue page
+    const viewMoreUrl = 'pages/current-issue.html';
     
     return `
         <div class="article-card">
@@ -168,7 +213,7 @@ function createArticleHTML(article) {
             <div style="margin-top: 15px; display: flex; gap: 10px;">
                 <a href="${pdfUrl}" 
                    target="_blank" 
-                   onclick="return checkPdfExists('${pdfUrl}', '${title}')"
+                   onclick="return checkPdfExists('${pdfUrl}', '${escapeHtml(title)}')"
                    style="background: #0b5ed7; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; cursor: pointer;">
                     <i class="fas fa-file-pdf"></i> PDF
                 </a>
@@ -181,24 +226,10 @@ function createArticleHTML(article) {
     `;
 }
 
-// Add this function to check if PDF exists before opening
 function checkPdfExists(url, title) {
-    console.log(`Checking if PDF exists: ${url}`);
-    
-    // You can add a fetch check here if needed
-    // fetch(url, { method: 'HEAD' })
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             alert(`PDF not found for: ${title}\nPath: ${url}`);
-    //             return false;
-    //         }
-    //     })
-    //     .catch(() => {
-    //         alert(`PDF not found for: ${title}\nPath: ${url}`);
-    //         return false;
-    //     });
-    
-    return true; // Allow navigation
+    console.log(`Opening PDF: ${url}`);
+    window.open(url, '_blank');
+    return false;
 }
 
 function showFallbackArticles() {
@@ -206,24 +237,25 @@ function showFallbackArticles() {
     
     const container = document.getElementById('latest-articles-container');
     
+    // Fallback based on your screenshot - showing 3 most recent articles
     const fallbackArticles = [
         { 
-            title: "Trail8", 
-            authors: "Author8", 
-            published: "2027-06-19",
-            article_id: "IJACM_16_06_026"
+            Title: "Trails", 
+            Author: "Karan, Vishnu", 
+            Published: "Dec 24, 2026",
+            DOI: "10.1007/s40430-020-02750-7"
         },
         { 
-            title: "Trail6", 
-            authors: "Karan, Vishnu", 
-            published: "2026-12-24",
-            article_id: "IJACM_16_06_024"
+            Title: "Trail2", 
+            Author: "VVVV", 
+            Published: "Mar 11, 2026",
+            DOI: "10.1007/s40430-020-02750-8"
         },
         { 
-            title: "Trail4", 
-            authors: "Ram, Ravi, Hari", 
-            published: "2026-06-19",
-            article_id: "IJACM_16_06_022"
+            Title: "Trail4", 
+            Author: "Ram, Ravi, Hari", 
+            Published: "Jun 19, 2026",
+            DOI: "10.1007/s40430-020-02750-5"
         }
     ];
     
@@ -245,31 +277,13 @@ function getLoadingHTML() {
     `;
 }
 
-function formatDate(dateString) {
+function formatDisplayDate(dateString) {
     if (!dateString) return 'Date N/A';
     
     try {
-        // Parse YYYY-MM-DD format
-        if (dateString.includes('-')) {
-            const parts = dateString.split('-');
-            if (parts.length === 3) {
-                const year = parts[0];
-                const month = parseInt(parts[1], 10);
-                const day = parseInt(parts[2], 10);
-                
-                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                
-                if (month >= 1 && month <= 12) {
-                    const monthName = monthNames[month - 1];
-                    return `${day.toString().padStart(2, '0')} ${monthName} ${year}`;
-                }
-            }
-        }
+        const date = parseCustomDate(dateString);
         
-        // Try to parse as Date object
-        const date = new Date(dateString);
-        if (!isNaN(date.getTime())) {
+        if (date && !isNaN(date.getTime()) && date.getFullYear() > 1970) {
             return date.toLocaleDateString('en-GB', {
                 day: '2-digit',
                 month: 'short',
@@ -277,12 +291,16 @@ function formatDate(dateString) {
             });
         }
         
-        return dateString;
+        // Return original if it looks like a proper date string
+        if (dateString.includes(',') || dateString.includes('-')) {
+            return dateString;
+        }
         
     } catch (error) {
         console.warn("⚠️ Date formatting error for:", dateString, error);
-        return dateString;
     }
+    
+    return dateString;
 }
 
 function escapeHtml(text) {
@@ -292,11 +310,52 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Also load on window load as fallback
+// Add CSS for loading animation
+if (!document.querySelector('#latest-articles-styles')) {
+    const style = document.createElement('style');
+    style.id = 'latest-articles-styles';
+    style.textContent = `
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .article-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        
+        .article-title {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+        
+        .article-authors {
+            color: #666;
+            margin: 0 0 5px 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Window load fallback
 window.addEventListener('load', function() {
     console.log("📄 Window loaded - checking if articles loaded...");
     
-    // Check if articles loaded successfully after 2 seconds
     setTimeout(() => {
         const container = document.getElementById('latest-articles-container');
         if (container && container.innerHTML.includes('Loading')) {
@@ -306,12 +365,4 @@ window.addEventListener('load', function() {
     }, 2000);
 });
 
-// Export for debugging
-window.debugLatestArticles = {
-    load: loadLatestArticles,
-    testPDF: function(articleId) {
-        const url = `paper/${articleId}.pdf`;
-        console.log(`Testing PDF URL: ${url}`);
-        window.open(url, '_blank');
-    }
-};
+console.log("📰 Latest Articles Script Loaded Successfully!");
