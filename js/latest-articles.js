@@ -5,7 +5,7 @@ console.log("📰 Latest Articles Script Starting...");
 const ARTICLES_JSON = '../data/articles.json';
 const MAX_RETRIES = 3;
 const MAX_ARTICLES_TO_SHOW = 3;
-const PAPERS_FOLDER = 'papers/'; // Change this to your actual papers folder
+const PAPERS_FOLDER = 'paper/'; // Change this to your actual papers folder
 
 let isLoading = false;
 let retryCount = 0;
