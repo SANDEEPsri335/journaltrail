@@ -509,60 +509,61 @@
             });
         }
         
-        function showSuccessMessage(paperId) {
-            const container = document.getElementById('submissionContainer');
-            container.innerHTML = `
-                <div class="success-container">
-                    <div class="success-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    
-                    <h2 class="success-title">Submission Successful!</h2>
-                    
-                    <div class="paper-id-box">
-                        <div class="paper-id-label">Your Paper Reference ID:</div>
-                        <div class="paper-id-value">${paperId}</div>
-                    </div>
-                    
-                    <div class="timeline">
-                        <h3 style="color: var(--secondary); margin-bottom: 15px;">What Happens Next:</h3>
-                        <div class="timeline-item">
-                            <i class="fas fa-envelope timeline-icon"></i>
-                            <strong>Immediate:</strong> Confirmation email sent to your inbox (check spam folder)
-                        </div>
-                        <div class="timeline-item">
-                            <i class="fas fa-clock timeline-icon"></i>
-                            <strong>Within 48 hours:</strong> Initial editorial check & paper ID assignment
-                        </div>
-                        <div class="timeline-item">
-                            <i class="fas fa-users timeline-icon"></i>
-                            <strong>1-2 weeks:</strong> Peer review assignment
-                        </div>
-                        <div class="timeline-item">
-                            <i class="fas fa-calendar-check timeline-icon"></i>
-                            <strong>4-6 weeks:</strong> Review process completion
-                        </div>
-                    </div>
-                    
-                    <div class="notes-box">
-                        <h3 style="color: #ffc107; margin-bottom: 15px;">Important Notes:</h3>
-                        <ul>
-                            <li>All correspondence: <strong>ijacmeditor@gmail.com</strong></li>
-                            <li>Quote your Paper ID (<strong>${paperId}</strong>) in all emails</li>
-                            <li>Save this reference ID for tracking</li>
-                        </ul>
-                    </div>
-                    
-                    <button onclick="location.reload()" class="submit-another-btn">
-                        <i class="fas fa-plus"></i> Submit Another Paper
-                    </button>
-                    
-                    <div class="contact-info">
-                        <i class="fas fa-info-circle"></i> Need help? Email: <strong>ijacmeditor@gmail.com</strong>
-                    </div>
+function showSuccessMessage(paperId) {
+    const container = document.getElementById('submissionContainer');
+    container.innerHTML = `
+        <div class="success-container">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            
+            <h2 class="success-title">Submission Successful!</h2>
+            
+            <div class="paper-id-box">
+                <div class="paper-id-label">Your Paper Reference ID:</div>
+                <div class="paper-id-value">${paperId}</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;">
+                    File saved as: <strong>${paperId}_[your-file-name]</strong>
                 </div>
-            `;
-        }
+            </div>
+            
+            <div class="timeline">
+                <h3 style="color: var(--secondary); margin-bottom: 15px; text-align: left;">What Happens Next:</h3>
+                
+                <div class="timeline-item" style="padding-left: 0;">
+                    <strong>Immediate:</strong> Confirmation email sent to your inbox (check spam folder)
+                </div>
+                <div class="timeline-item" style="padding-left: 0;">
+                    <strong>Within 48 hours:</strong> Initial editorial check & paper ID assignment
+                </div>
+                <div class="timeline-item" style="padding-left: 0;">
+                    <strong>1-2 weeks:</strong> Peer review assignment
+                </div>
+                <div class="timeline-item" style="padding-left: 0;">
+                    <strong>4-6 weeks:</strong> Review process completion
+                </div>
+            </div>
+            
+            <div class="notes-box">
+                <h3 style="color: #ffc107; margin-bottom: 15px; text-align: left;">Important Notes:</h3>
+                <ul>
+                    <li>All correspondence: <strong>ijacmeditor@gmail.com</strong></li>
+                    <li>Quote your Paper ID (<strong>${paperId}</strong>) in all emails</li>
+                    <li>Save this reference ID for tracking</li>
+                </ul>
+            </div>
+            
+            <!-- Only ONE button - Submit Another Paper -->
+            <button onclick="location.reload()" class="submit-another-btn">
+                Submit Another Paper
+            </button>
+            
+            <div class="contact-info">
+                Need help? Email: <strong>ijacmeditor@gmail.com</strong>
+            </div>
+        </div>
+    `;
+}
     </script>
 </body>
 </html>
