@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Paper & Guidelines - IJACM</title>
-    <meta name="keywords" content="advanced computing, mechanical systems, engineering research, open access journal, peer reviewed, IJACM">
-    <meta name="description" content="Submit your research paper to IJACM. Review our guidelines and submission process.">
-    <meta name="reply-to" content="ijacmeditor@gmail.com">
-    <meta name="contact" content="ijacmeditor@gmail.com">
+    <meta name="keywords"
+        content="advanced computing, mechanical systems, engineering research, open access journal, peer reviewed, IJACM">
+    <meta name="description"
+        content="Submit your research paper to IJACM. Review our guidelines and submission process.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* ================= GLOBAL STYLES ================= */
@@ -288,108 +289,22 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Success Message Styles */
-        .success-container {
+        /* Success Message */
+        .success-message {
             text-align: center;
-            padding: 30px;
+            padding: 40px;
             animation: fadeIn 0.5s ease;
         }
 
-        .success-icon {
+        .success-message i {
             font-size: 4rem;
             color: #4caf50;
             margin-bottom: 20px;
         }
 
-        .success-title {
+        .success-message h2 {
             color: var(--white);
-            font-size: 2rem;
-            margin-bottom: 20px;
-        }
-
-        .paper-id-box {
-            background: rgba(0, 176, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid var(--secondary);
-            margin: 25px 0;
-            text-align: center;
-        }
-
-        .paper-id-label {
-            font-size: 1rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .paper-id-value {
-            font-size: 1.5rem;
-            color: var(--secondary);
-            font-weight: bold;
-            font-family: monospace;
-            letter-spacing: 1px;
-        }
-
-        .timeline-box {
-            text-align: left;
-            margin: 30px 0;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
-        .notes-box {
-            background: rgba(255, 193, 7, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #ffc107;
-            margin: 25px 0;
-            text-align: left;
-        }
-
-        .notes-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .notes-box li {
-            margin-bottom: 10px;
-            padding-left: 25px;
-            position: relative;
-        }
-
-        .notes-box li:before {
-            content: "•";
-            color: #ffc107;
-            position: absolute;
-            left: 0;
-            font-size: 1.5rem;
-        }
-
-        .submit-another-btn {
-            padding: 12px 30px;
-            background: var(--gradient-secondary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            margin-top: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .contact-info {
-            margin-top: 30px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            margin-bottom: 15px;
         }
 
         /* Responsive Design */
@@ -428,13 +343,12 @@
     <div id="navbar-placeholder"></div>
 
     <main class="submit-page-wrapper">
-        <div class="submission-box" id="submissionContainer">
+        <div class="submission-box">
             <h2><i class="fas fa-paper-plane"></i> Submit Your Paper</h2>
             <p class="submission-guide">
                 Please fill in the details below. Ensure your paper follows the
                 <a href="author-guidelines.html" target="_blank">Author Guidelines</a> before submission.
                 <br><small>Maximum file size: 5MB | Accepted formats: PDF, DOC, DOCX</small>
-                <br><small>All correspondence: <strong>ijacmeditor@gmail.com</strong></small>
             </p>
 
             <form id="submissionForm" method="POST" enctype="multipart/form-data">
@@ -522,9 +436,9 @@
     </main>
 
     <div id="footer-placeholder"></div>
-    
+    <script src="../script.js"></script>
     <script>
-        // Your Google Apps Script Web App URL
+        // Updated Google Apps Script URL with file renaming
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxihoeURdTiKhVX2CZcV3LfoajRPXLwmIa2pDTEdW5PrlmIKevhe1Dq7ZqyMvX-Id_FNQ/exec';
 
         // File name display
@@ -552,12 +466,12 @@
             const file = fileInput.files[0];
             
             if (!file) {
-                alert('Please select a file to upload.');
+                showNotification('Please select a file to upload.', 'error');
                 return;
             }
             
             if (file.size > 5 * 1024 * 1024) {
-                alert('File is too large. Maximum size is 5 MB.');
+                showNotification('File is too large. Maximum size is 5 MB.', 'error');
                 return;
             }
 
@@ -574,7 +488,7 @@
                 // Convert file to base64
                 const fileBase64 = await toBase64(file);
                 
-                // Prepare form data for Google Apps Script
+                // Prepare form data
                 const formData = new FormData();
                 formData.append('name', document.getElementById('submitterName').value);
                 formData.append('email', document.getElementById('submitterEmail').value);
@@ -586,13 +500,13 @@
                 formData.append('declaration_terms', document.getElementById('decl2').checked ? 'Yes' : 'No');
                 formData.append('fileName', file.name);
                 formData.append('fileType', file.type);
-                formData.append('fileData', fileBase64.split(',')[1]);
+                formData.append('fileData', fileBase64.split(',')[1]); // Remove data URL prefix
 
                 // Send to Google Apps Script
-                await fetch(SCRIPT_URL, {
+                const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     body: formData,
-                    mode: 'no-cors'
+                    mode: 'no-cors' // Important for Google Apps Script
                 });
 
                 // Generate Paper ID for display
@@ -603,7 +517,7 @@
 
             } catch (error) {
                 console.error('Submission error:', error);
-                alert('Submission failed. Please try again or contact ijacmeditor@gmail.com');
+                showNotification('Submission failed. Please try again or contact support.', 'error');
                 
                 // Reset button
                 submitBtn.disabled = false;
@@ -622,26 +536,23 @@
             });
         }
 
-        // Show success message - FIXED VERSION (NO ICONS, NO EXTRA BUTTONS)
+        // Show success message - UPDATED VERSION (No icons, only Submit Another Paper button)
         function showSuccessMessage(paperId) {
-            const container = document.getElementById('submissionContainer');
-            container.innerHTML = `
-                <div class="success-container">
-                    <div class="success-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
+            const submissionBox = document.querySelector('.submission-box');
+            submissionBox.innerHTML = `
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <h2>Submission Successful!</h2>
                     
-                    <h2 class="success-title">Submission Successful!</h2>
-                    
-                    <div class="paper-id-box">
-                        <div class="paper-id-label">Your Paper Reference ID:</div>
-                        <div class="paper-id-value">${paperId}</div>
+                    <div style="margin: 25px 0; padding: 20px; background: rgba(0, 176, 255, 0.1); border-radius: 8px; border-left: 4px solid var(--secondary);">
+                        <div style="font-size: 1rem; color: var(--text-muted); margin-bottom: 8px;">Your Paper Reference ID:</div>
+                        <div style="font-size: 1.8rem; color: var(--secondary); font-weight: bold; font-family: monospace;">${paperId}</div>
                         <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;">
-                            File will be saved as: <strong>${paperId}_[your-filename]</strong>
+                            File saved in Google Drive as: <strong>${paperId}_[your-filename]</strong>
                         </div>
                     </div>
                     
-                    <div class="timeline-box">
+                    <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 8px; text-align: left;">
                         <h3 style="color: var(--secondary); margin-bottom: 15px;">What Happens Next:</h3>
                         <div style="margin-bottom: 10px; color: var(--text-light);">
                             <strong>Immediate:</strong> Confirmation email sent to your inbox (check spam folder)
@@ -657,26 +568,74 @@
                         </div>
                     </div>
                     
-                    <div class="notes-box">
+                    <div style="margin-top: 30px; padding: 20px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; border-left: 4px solid #ffc107; text-align: left;">
                         <h3 style="color: #ffc107; margin-bottom: 15px;">Important Notes:</h3>
-                        <ul>
-                            <li>All correspondence: <strong>ijacmeditor@gmail.com</strong></li>
-                            <li>Quote your Paper ID (<strong>${paperId}</strong>) in all emails</li>
-                            <li>Save this reference ID for tracking</li>
-                        </ul>
+                        <div style="color: var(--text-light); line-height: 1.8;">
+                            <div style="margin-bottom: 8px;">• All correspondence: <strong>ijacmeditor@gmail.com</strong></div>
+                            <div style="margin-bottom: 8px;">• Quote your Paper ID (<strong>${paperId}</strong>) in all emails</div>
+                            <div style="margin-bottom: 0;">• Save this reference ID for tracking</div>
+                        </div>
                     </div>
                     
-                    <!-- ONLY ONE BUTTON - NO "Return to Home" button -->
-                    <button onclick="location.reload()" class="submit-another-btn">
-                        <i class="fas fa-plus"></i> Submit Another Paper
+                    <!-- Only ONE button - Submit Another Paper -->
+                    <button onclick="location.reload()" style="margin-top: 30px; padding: 12px 30px; background: var(--gradient-secondary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                        Submit Another Paper
                     </button>
-                    
-                    <div class="contact-info">
-                        <i class="fas fa-info-circle"></i> Need help? Email: <strong>ijacmeditor@gmail.com</strong>
-                    </div>
                 </div>
             `;
         }
+
+        // Notification function
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? '#2e7d32' : '#d32f2f'};
+                color: white;
+                border-radius: 6px;
+                z-index: 10000;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                animation: slideIn 0.3s ease;
+            `;
+
+            // Icon
+            const icon = type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>';
+            notification.innerHTML = `${icon} <span>${message}</span>`;
+
+            document.body.appendChild(notification);
+
+            // Remove after 5 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        // Add animations styles
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
