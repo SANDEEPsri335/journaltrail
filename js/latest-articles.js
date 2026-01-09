@@ -5,7 +5,7 @@ console.log("📰 Latest Articles Script Starting...");
 const ARTICLES_JSON = '../data/articles.json';
 const MAX_RETRIES = 3;
 const MAX_ARTICLES_TO_SHOW = 3;
-const PAPERS_FOLDER = 'papers/'; // Adjust this to your actual folder name
+const PAPERS_FOLDER = 'papers/'; // Change this to your actual papers folder
 
 let isLoading = false;
 let retryCount = 0;
@@ -82,7 +82,6 @@ async function fetchArticlesWithRetry() {
         
         const data = await response.json();
         console.log("✅ Data fetched successfully");
-        console.log("Sample article structure:", data[0]); // Debug: Show first article
         
         if (!Array.isArray(data)) {
             console.warn("⚠️ Data is not an array:", typeof data);
@@ -104,9 +103,8 @@ function displayArticles(articles) {
     
     // Sort articles by published date (newest first)
     const sortedArticles = [...articles].sort((a, b) => {
-        // Handle different date formats
-        const dateA = parseCustomDate(a.Published || a.published || '1970-01-01');
-        const dateB = parseCustomDate(b.Published || b.published || '1970-01-01');
+        const dateA = new Date(a.published || '1970-01-01');
+        const dateB = new Date(b.published || '1970-01-01');
         return dateB - dateA; // Newest first
     });
     
@@ -126,125 +124,35 @@ function displayArticles(articles) {
     topArticles.forEach((article, index) => {
         const articleHTML = createArticleHTML(article);
         container.innerHTML += articleHTML;
-        console.log(`✅ Displayed article ${index + 1}: ${article.Title || article.title}`);
+        console.log(`✅ Displayed article ${index + 1}: ${article.title}`);
+        console.log(`   Article ID: ${article.article_id}`);
         console.log(`   PDF Path: ${getPdfPath(article)}`);
     });
     
     console.log("✅ All articles displayed successfully");
 }
 
-function parseCustomDate(dateString) {
-    if (!dateString) return new Date('1970-01-01');
-    
-    try {
-        // Format: "Dec 24, 2026" (from your screenshot)
-        if (dateString.includes(',')) {
-            const parts = dateString.split(' ');
-            if (parts.length === 3) {
-                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                const month = monthNames.indexOf(parts[0]) + 1;
-                const day = parseInt(parts[1].replace(',', ''), 10);
-                const year = parseInt(parts[2], 10);
-                
-                if (month > 0 && !isNaN(day) && !isNaN(year)) {
-                    return new Date(year, month - 1, day);
-                }
-            }
-        }
-        
-        // Format: "YYYY-MM-DD"
-        if (dateString.includes('-')) {
-            const parts = dateString.split('-');
-            if (parts.length === 3) {
-                const year = parseInt(parts[0], 10);
-                const month = parseInt(parts[1], 10);
-                const day = parseInt(parts[2], 10);
-                
-                if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
-                    return new Date(year, month - 1, day);
-                }
-            }
-        }
-        
-        // Try default Date parsing
-        const date = new Date(dateString);
-        if (!isNaN(date.getTime())) {
-            return date;
-        }
-        
-    } catch (error) {
-        console.warn("⚠️ Date parsing error for:", dateString, error);
-    }
-    
-    return new Date('1970-01-01');
-}
-
 function getPdfPath(article) {
-    // Try to get paper ID from different possible fields
-    // Common field names: paper_id, article_id, id, file_name, pdf_name, doi
-    let paperId = '';
+    // Use the article_id directly for PDF filename
+    const articleId = article.article_id;
     
-    // Check various possible field names for paper ID
-    const possibleIdFields = [
-        'paper_id',
-        'article_id',
-        'id',
-        'paperId',
-        'articleId',
-        'file_name',
-        'pdf_name',
-        'pdf',
-        'file',
-        'doi',
-        'DOI'
-    ];
-    
-    for (const field of possibleIdFields) {
-        if (article[field]) {
-            paperId = article[field];
-            console.log(`Found paper ID in field "${field}": ${paperId}`);
-            break;
-        }
+    if (!articleId) {
+        console.error("❌ No article_id found for article:", article.title);
+        return '#';
     }
     
-    // If no paper ID found, try to extract from DOI
-    if (!paperId && (article.doi || article.DOI)) {
-        const doi = article.doi || article.DOI;
-        // Extract last part of DOI for filename
-        const doiParts = doi.split('/');
-        if (doiParts.length > 0) {
-            paperId = doiParts[doiParts.length - 1];
-            console.log(`Extracted paper ID from DOI: ${paperId}`);
-        }
-    }
+    // Simple path: papers/IJACM_01_01_001.pdf
+    const pdfPath = `${PAPERS_FOLDER}${articleId}.pdf`;
+    console.log(`📄 PDF path for ${article.title}: ${pdfPath}`);
     
-    // If still no ID, create from title
-    if (!paperId && (article.Title || article.title)) {
-        const title = article.Title || article.title;
-        paperId = title.toLowerCase()
-            .replace(/[^a-z0-9]/g, '_')
-            .replace(/_+/g, '_')
-            .replace(/^_|_$/g, '');
-        console.log(`Created paper ID from title: ${paperId}`);
-    }
-    
-    // Add .pdf extension if not present
-    if (paperId && !paperId.toLowerCase().endsWith('.pdf')) {
-        paperId += '.pdf';
-    }
-    
-    // Return the full path
-    const pdfPath = `${PAPERS_FOLDER}${paperId}`;
-    console.log(`Final PDF path: ${pdfPath}`);
     return pdfPath;
 }
 
 function createArticleHTML(article) {
-    // Extract data - handle both uppercase and lowercase field names
-    const title = article.Title || article.title || 'Untitled Article';
-    const authors = article.Author || article.author || 'Unknown Author';
-    const publishedDate = article.Published || article.published || '';
+    // Extract data from your JSON structure
+    const title = article.title || 'Untitled Article';
+    const authors = article.authors || 'Unknown Author';
+    const publishedDate = article.published || '';
     const date = formatDisplayDate(publishedDate);
     const pdfUrl = getPdfPath(article);
     const viewMoreUrl = 'pages/current-issue.html';
@@ -290,7 +198,7 @@ function checkAndOpenPdf(url, title) {
                 window.open(url, '_blank');
             } else {
                 console.error(`❌ PDF not found (${response.status}): ${url}`);
-                alert(`PDF not found for: ${title}\n\nPlease check the file path:\n${url}`);
+                alert(`PDF not found for: ${title}\n\nPath: ${url}`);
             }
         })
         .catch(error => {
@@ -306,25 +214,25 @@ function showFallbackArticles() {
     
     const container = document.getElementById('latest-articles-container');
     
-    // Fallback based on your screenshot
+    // Fallback based on your JSON structure
     const fallbackArticles = [
         { 
-            Title: "Trails", 
-            Author: "Karan, Vishnu", 
-            Published: "Dec 24, 2026",
-            paper_id: "trails_2026.pdf"  // Example paper ID
+            title: "Trail1", 
+            authors: "Sandeep", 
+            published: "2025-12-01",
+            article_id: "IJACM_01_01_001"
         },
         { 
-            Title: "Trail2", 
-            Author: "VVVV", 
-            Published: "Mar 11, 2026",
-            paper_id: "trail2_2026.pdf"  // Example paper ID
+            title: "Trail2", 
+            authors: "Author2", 
+            published: "2025-11-01",
+            article_id: "IJACM_01_01_002"
         },
         { 
-            Title: "Trail4", 
-            Author: "Ram, Ravi, Hari", 
-            Published: "Jun 19, 2026",
-            paper_id: "trail4_2026.pdf"  // Example paper ID
+            title: "Trail3", 
+            authors: "Author3", 
+            published: "2025-10-01",
+            article_id: "IJACM_01_01_003"
         }
     ];
     
@@ -350,19 +258,14 @@ function formatDisplayDate(dateString) {
     if (!dateString) return 'Date N/A';
     
     try {
-        const date = parseCustomDate(dateString);
+        const date = new Date(dateString);
         
-        if (date && !isNaN(date.getTime()) && date.getFullYear() > 1970) {
+        if (!isNaN(date.getTime())) {
             return date.toLocaleDateString('en-GB', {
                 day: '2-digit',
                 month: 'short',
                 year: 'numeric'
             });
-        }
-        
-        // Return original if it looks like a proper date string
-        if (dateString.includes(',') || dateString.includes('-')) {
-            return dateString;
         }
         
     } catch (error) {
@@ -397,8 +300,8 @@ if (!document.querySelector('#latest-articles-styles')) {
         }
         
         .loading-spinner {
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #00b0ff;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-top: 3px solid #0b5ed7;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -407,7 +310,7 @@ if (!document.querySelector('#latest-articles-styles')) {
         }
         
         .loading-text {
-            color: #00b0ff;
+            color: #0b5ed7;
             font-size: 16px;
         }
         
@@ -463,6 +366,9 @@ if (!document.querySelector('#latest-articles-styles')) {
             gap: 5px;
             cursor: pointer;
             transition: background-color 0.2s;
+            border: none;
+            font-family: inherit;
+            font-size: 14px;
         }
         
         .pdf-button:hover {
@@ -481,6 +387,9 @@ if (!document.querySelector('#latest-articles-styles')) {
             gap: 5px;
             cursor: pointer;
             transition: background-color 0.2s;
+            border: none;
+            font-family: inherit;
+            font-size: 14px;
         }
         
         .view-more-button:hover {
@@ -516,25 +425,26 @@ window.debugArticles = {
     },
     testPDF: function(articleIndex = 0) {
         const container = document.getElementById('latest-articles-container');
-        const articleCard = container.querySelectorAll('.article-card')[articleIndex];
-        if (articleCard) {
-            const pdfLink = articleCard.querySelector('.pdf-button');
+        const articleCards = container.querySelectorAll('.article-card');
+        if (articleCards.length > articleIndex) {
+            const pdfLink = articleCards[articleIndex].querySelector('.pdf-button');
             if (pdfLink) {
                 const url = pdfLink.getAttribute('href');
-                const title = articleCard.querySelector('.article-title').textContent;
+                const title = articleCards[articleIndex].querySelector('.article-title').textContent;
                 checkAndOpenPdf(url, title);
             }
         }
     },
-    showData: async function() {
-        try {
-            const response = await fetch(ARTICLES_JSON);
-            const data = await response.json();
-            console.log("📊 Full JSON data:", data);
-            console.log("📋 First article fields:", Object.keys(data[0] || {}));
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
+    showCurrentArticles: function() {
+        console.log("📊 Current articles in container:");
+        const container = document.getElementById('latest-articles-container');
+        const articleCards = container.querySelectorAll('.article-card');
+        articleCards.forEach((card, index) => {
+            const title = card.querySelector('.article-title').textContent;
+            const pdfLink = card.querySelector('.pdf-button').getAttribute('href');
+            console.log(`${index + 1}. ${title}`);
+            console.log(`   PDF: ${pdfLink}`);
+        });
     }
 };
 
