@@ -2,10 +2,10 @@
 console.log("📰 Latest Articles Script Starting...");
 
 // Configuration
-const ARTICLES_JSON = '../data/articles.json';
+const ARTICLES_JSON = '../data/articles.json'; // Double-check this path
 const MAX_RETRIES = 3;
 const MAX_ARTICLES_TO_SHOW = 3;
-const PAPERS_FOLDER = 'papers/'; // Change this to your actual papers folder
+const PAPERS_FOLDER = 'papers/';
 
 let isLoading = false;
 let retryCount = 0;
@@ -37,13 +37,14 @@ async function loadLatestArticles() {
     
     try {
         // Fetch articles from JSON
+        console.log(`Fetching from: ${ARTICLES_JSON}`);
         const articles = await fetchArticlesWithRetry();
         
         if (articles && articles.length > 0) {
-            console.log(`✅ Successfully loaded ${articles.length} articles`);
+            console.log(`✅ Successfully loaded ${articles.length} articles from JSON`);
             displayArticles(articles);
         } else {
-            console.warn("⚠️ No articles found or empty array");
+            console.warn("⚠️ No articles found or empty array - showing fallback");
             showFallbackArticles();
         }
         
@@ -52,11 +53,13 @@ async function loadLatestArticles() {
     } catch (error) {
         console.error("❌ Error loading articles:", error);
         
+        // Try fallback after error
         if (retryCount < MAX_RETRIES) {
             retryCount++;
             console.log(`🔄 Retrying (${retryCount}/${MAX_RETRIES})...`);
             setTimeout(loadLatestArticles, 1000);
         } else {
+            console.error("❌ Max retries reached, showing fallback");
             showFallbackArticles();
         }
     } finally {
@@ -66,7 +69,12 @@ async function loadLatestArticles() {
 
 async function fetchArticlesWithRetry() {
     try {
-        const response = await fetch(`${ARTICLES_JSON}?t=${Date.now()}`, {
+        // Add timestamp to prevent caching issues
+        const timestamp = Date.now();
+        const url = `${ARTICLES_JSON}?t=${timestamp}`;
+        console.log(`📡 Fetching from URL: ${url}`);
+        
+        const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -82,9 +90,23 @@ async function fetchArticlesWithRetry() {
         
         const data = await response.json();
         console.log("✅ Data fetched successfully");
+        console.log("First article sample:", data[0]); // Debug: Show first article
         
         if (!Array.isArray(data)) {
             console.warn("⚠️ Data is not an array:", typeof data);
+            
+            // Try to handle if data is an object with articles inside
+            if (typeof data === 'object' && data !== null) {
+                // Check common property names
+                const possibleArrayProperties = ['articles', 'items', 'papers', 'data'];
+                for (const prop of possibleArrayProperties) {
+                    if (Array.isArray(data[prop])) {
+                        console.log(`Found articles in property: ${prop}`);
+                        return data[prop];
+                    }
+                }
+            }
+            
             throw new Error("Invalid data format: expected array");
         }
         
@@ -101,73 +123,84 @@ function displayArticles(articles) {
     
     const container = document.getElementById('latest-articles-container');
     
-    // First, log all dates to debug
-    console.log("📅 All article dates:");
-    articles.forEach((article, index) => {
-        console.log(`${index + 1}. ${article.title}: ${article.published} (parsed: ${new Date(article.published)})`);
-    });
+    // Filter out articles without required fields
+    const validArticles = articles.filter(article => 
+        article && 
+        (article.title || article.Title) && 
+        (article.published || article.Published)
+    );
     
-    // Sort articles by published date (newest first)
-    const sortedArticles = [...articles].sort((a, b) => {
-        // Parse dates
-        const dateA = new Date(a.published || '1970-01-01');
-        const dateB = new Date(b.published || '1970-01-01');
-        
-        // Log sorting comparison for debugging
-        console.log(`Sorting: ${a.title} (${dateA}) vs ${b.title} (${dateB}) = ${dateB - dateA}`);
-        
-        // Newest first (descending order)
-        return dateB - dateA;
-    });
+    console.log(`📊 Found ${validArticles.length} valid articles`);
     
-    console.log("📊 Articles after sorting:");
-    sortedArticles.forEach((article, index) => {
-        console.log(`${index + 1}. ${article.title} - ${article.published}`);
-    });
-    
-    // Take top N articles (most recent)
-    const topArticles = sortedArticles.slice(0, MAX_ARTICLES_TO_SHOW);
-    
-    console.log(`🎯 Top ${topArticles.length} most recent articles:`, topArticles);
-    
-    if (topArticles.length === 0) {
+    if (validArticles.length === 0) {
         console.warn("⚠️ No valid articles to display");
         showFallbackArticles();
         return;
     }
+    
+    // Sort articles by published date (newest first)
+    const sortedArticles = [...validArticles].sort((a, b) => {
+        const dateA = new Date(a.published || a.Published || '1970-01-01');
+        const dateB = new Date(b.published || b.Published || '1970-01-01');
+        return dateB - dateA; // Newest first
+    });
+    
+    console.log("📅 Articles sorted by date (newest first):");
+    sortedArticles.forEach((article, index) => {
+        console.log(`${index + 1}. ${article.title || article.Title} - ${article.published || article.Published}`);
+    });
+    
+    // Take top N articles
+    const topArticles = sortedArticles.slice(0, MAX_ARTICLES_TO_SHOW);
+    
+    console.log(`🎯 Displaying top ${topArticles.length} most recent articles`);
     
     container.innerHTML = '';
     
     topArticles.forEach((article, index) => {
         const articleHTML = createArticleHTML(article);
         container.innerHTML += articleHTML;
-        console.log(`✅ Displayed article ${index + 1}: ${article.title} (${article.published})`);
-        console.log(`   Article ID: ${article.article_id}`);
-        console.log(`   PDF Path: ${getPdfPath(article)}`);
+        console.log(`✅ Displayed article ${index + 1}: ${article.title || article.Title}`);
     });
     
-    console.log("✅ All articles displayed successfully");
+    console.log("✅ All articles displayed successfully from JSON data");
 }
 
 function getPdfPath(article) {
-    // Use the article_id directly for PDF filename
-    const articleId = article.article_id;
+    // Use the article_id or create from title
+    let articleId = article.article_id || article.articleId || '';
     
     if (!articleId) {
-        console.error("❌ No article_id found for article:", article.title);
+        // Try to extract from title
+        const title = article.title || article.Title || '';
+        if (title) {
+            articleId = title.toLowerCase()
+                .replace(/[^a-z0-9]/g, '_')
+                .replace(/_+/g, '_')
+                .replace(/^_|_$/g, '');
+        }
+    }
+    
+    if (!articleId) {
+        console.error("❌ No article_id found for article:", article.title || article.Title);
         return '#';
     }
     
-    // Simple path: papers/IJACM_01_01_001.pdf
-    const pdfPath = `${PAPERS_FOLDER}${articleId}.pdf`;
+    // Add .pdf extension if not present
+    if (!articleId.toLowerCase().endsWith('.pdf')) {
+        articleId += '.pdf';
+    }
+    
+    // Create path: papers/IJACM_01_01_001.pdf
+    const pdfPath = `${PAPERS_FOLDER}${articleId}`;
     return pdfPath;
 }
 
 function createArticleHTML(article) {
-    // Extract data from your JSON structure
-    const title = article.title || 'Untitled Article';
-    const authors = article.authors || 'Unknown Author';
-    const publishedDate = article.published || '';
+    // Extract data from article object
+    const title = article.title || article.Title || 'Untitled Article';
+    const authors = article.authors || article.Authors || article.author || article.Author || 'Unknown Author';
+    const publishedDate = article.published || article.Published || '';
     const date = formatDisplayDate(publishedDate);
     const pdfUrl = getPdfPath(article);
     const viewMoreUrl = 'pages/current-issue.html';
@@ -200,64 +233,69 @@ function createArticleHTML(article) {
     `;
 }
 
-// Function to check and open PDF
 function checkAndOpenPdf(url, title) {
     console.log(`📄 Attempting to open PDF: ${url}`);
     
-    // First check if PDF exists
-    fetch(url, { method: 'HEAD' })
-        .then(response => {
-            if (response.ok) {
-                console.log(`✅ PDF found: ${url}`);
-                // Open PDF in new tab
-                window.open(url, '_blank');
-            } else {
-                console.error(`❌ PDF not found (${response.status}): ${url}`);
-                alert(`PDF not found for: ${title}\n\nPath: ${url}`);
-            }
-        })
-        .catch(error => {
-            console.error(`❌ Error checking PDF: ${error.message}`);
-            alert(`Cannot access PDF for: ${title}\n\nError: ${error.message}\n\nPath: ${url}`);
-        });
+    if (url === '#') {
+        alert(`PDF not available for: ${title}`);
+        return false;
+    }
     
+    // Open PDF in new tab
+    window.open(url, '_blank');
     return false;
 }
 
 function showFallbackArticles() {
-    console.log("🔄 Showing fallback articles");
+    console.log("🔄 Showing fallback articles (JSON not loaded)");
     
     const container = document.getElementById('latest-articles-container');
     
-    // Fallback based on your JSON structure - showing most recent dates
+    // Only show fallback if we're not already showing articles
+    if (container.innerHTML.includes('article-card')) {
+        console.log("⚠️ Already showing articles, skipping fallback");
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    // Show a message first
+    container.innerHTML = `
+        <div class="error-message">
+            <p>⚠️ Could not load latest articles from server.</p>
+            <p>Showing sample articles instead.</p>
+        </div>
+    `;
+    
+    // Then add fallback articles
     const fallbackArticles = [
         { 
             title: "Trail1", 
             authors: "Sandeep", 
-            published: "2025-12-01",  // Most recent
+            published: "2025-12-01",
             article_id: "IJACM_01_01_001"
         },
         { 
             title: "Trail2", 
             authors: "Author2", 
-            published: "2025-11-01",  // Second most recent
+            published: "2025-11-01",
             article_id: "IJACM_01_01_002"
         },
         { 
             title: "Trail3", 
             authors: "Author3", 
-            published: "2025-10-01",  // Third most recent
+            published: "2025-10-01",
             article_id: "IJACM_01_01_003"
         }
     ];
     
-    container.innerHTML = '';
-    
-    fallbackArticles.forEach(article => {
-        container.innerHTML += createArticleHTML(article);
-    });
-    
-    console.log("✅ Fallback articles displayed");
+    // Small delay for better UX
+    setTimeout(() => {
+        fallbackArticles.forEach(article => {
+            container.innerHTML += createArticleHTML(article);
+        });
+        console.log("✅ Fallback articles displayed");
+    }, 500);
 }
 
 function getLoadingHTML() {
@@ -330,6 +368,16 @@ if (!document.querySelector('#latest-articles-styles')) {
         .loading-text {
             color: #0b5ed7;
             font-size: 16px;
+        }
+        
+        .error-message {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+            text-align: center;
         }
         
         .article-card {
@@ -429,56 +477,44 @@ window.addEventListener('load', function() {
     
     setTimeout(() => {
         const container = document.getElementById('latest-articles-container');
-        if (container && container.innerHTML.includes('Loading')) {
-            console.log("🔄 Window.load: Articles still loading, retrying...");
+        if (container && (container.innerHTML.includes('Loading') || container.innerHTML === '')) {
+            console.log("🔄 Window.load: Loading articles...");
             loadLatestArticles();
         }
-    }, 2000);
+    }, 1000);
 });
 
-// Debug functions
-window.debugArticles = {
-    reload: function() {
-        console.clear();
-        loadLatestArticles();
-    },
-    testSorting: async function() {
+// Debug and utility functions
+window.articleDebug = {
+    // Test JSON loading
+    testJsonLoad: async function() {
+        console.log("🧪 Testing JSON load...");
         try {
             const response = await fetch(ARTICLES_JSON);
-            const articles = await response.json();
-            console.log("🧪 Testing date sorting...");
-            
-            // Show all articles with dates
-            articles.forEach((article, index) => {
-                const date = new Date(article.published);
-                console.log(`${index + 1}. ${article.title}: ${article.published} -> ${date}`);
-            });
-            
-            // Sort and show
-            const sorted = [...articles].sort((a, b) => {
-                return new Date(b.published) - new Date(a.published);
-            });
-            
-            console.log("\n📊 Sorted by date (newest first):");
-            sorted.forEach((article, index) => {
-                console.log(`${index + 1}. ${article.title}: ${article.published}`);
-            });
+            const data = await response.json();
+            console.log("✅ JSON loaded successfully");
+            console.log("Data type:", typeof data);
+            console.log("Is array?", Array.isArray(data));
+            console.log("Number of items:", data.length || 'N/A');
+            console.log("First item:", data[0] || 'No data');
+            return data;
         } catch (error) {
-            console.error("Error:", error);
+            console.error("❌ Failed to load JSON:", error);
+            return null;
         }
     },
-    showCurrentArticles: function() {
-        console.log("📊 Current articles in container:");
+    
+    // Force reload
+    reload: function() {
+        console.clear();
+        console.log("🔄 Forcing reload...");
+        loadLatestArticles();
+    },
+    
+    // Show current state
+    showState: function() {
         const container = document.getElementById('latest-articles-container');
-        const articleCards = container.querySelectorAll('.article-card');
-        articleCards.forEach((card, index) => {
-            const title = card.querySelector('.article-title').textContent;
-            const authors = card.querySelector('.article-authors').textContent;
-            const date = card.querySelector('.article-date').textContent;
-            console.log(`${index + 1}. ${title}`);
-            console.log(`   Authors: ${authors}`);
-            console.log(`   Date: ${date}`);
-        });
+        console.log("📊 Container innerHTML:", container ? container.innerHTML : 'No container');
     }
 };
 
