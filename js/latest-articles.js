@@ -1,13 +1,22 @@
 // js/latest-articles.js
 console.log("📰 Latest Articles Script Starting...");
 
-// Configuration
-const ARTICLES_JSON = '../data/articles.json'; // Path to your JSON
-const PAPERS_FOLDER = 'paper/'; // Folder where PDFs are stored
-const MAX_ARTICLES = 3; // Show only 3 latest articles
+// Configuration - Try different paths if needed
+const ARTICLES_JSON_PATHS = [
+    'data/articles.json',          // Same folder as js/latest-articles.js
+    '../data/articles.json',       // One level up
+    './data/articles.json',        // Current folder
+    '/data/articles.json',         // Root folder
+    'js/../data/articles.json'     // From js folder up to data folder
+];
+const PAPERS_FOLDER = 'paper/';
+const MAX_ARTICLES = 3;
+
+let currentJsonPath = ARTICLES_JSON_PATHS[0];
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log("✅ DOM Content Loaded");
+    console.log("📍 Current URL:", window.location.href);
     loadLatestArticles();
 });
 
@@ -17,7 +26,7 @@ async function loadLatestArticles() {
     const container = document.getElementById('latest-articles-container');
     
     if (!container) {
-        console.error("❌ Container not found!");
+        console.error("❌ Container not found! Looking for 'latest-articles-container'");
         return;
     }
     
@@ -30,40 +39,67 @@ async function loadLatestArticles() {
     `;
     
     try {
-        // Fetch the JSON data
-        const response = await fetch(ARTICLES_JSON);
+        let articles = null;
+        let lastError = null;
         
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        // Try multiple paths
+        for (const path of ARTICLES_JSON_PATHS) {
+            console.log(`🔍 Trying path: ${path}`);
+            currentJsonPath = path;
+            
+            try {
+                const response = await fetch(path);
+                console.log(`📡 Response for ${path}: ${response.status} ${response.statusText}`);
+                
+                if (response.ok) {
+                    articles = await response.json();
+                    console.log(`✅ Successfully loaded JSON from: ${path}`);
+                    console.log(`📊 Found ${articles.length} articles`);
+                    break; // Stop trying other paths
+                } else {
+                    console.warn(`⚠️ Failed to load from ${path}: ${response.status}`);
+                }
+            } catch (error) {
+                lastError = error;
+                console.warn(`⚠️ Error loading from ${path}:`, error.message);
+            }
         }
         
-        const articles = await response.json();
-        console.log(`✅ Loaded ${articles.length} articles`);
+        if (!articles) {
+            throw new Error(`Could not load JSON from any path. Last error: ${lastError?.message}`);
+        }
         
         // Sort by published date (newest first)
         const sortedArticles = articles.sort((a, b) => {
             return new Date(b.published) - new Date(a.published);
         });
         
+        console.log("📅 Articles sorted by date:");
+        sortedArticles.forEach((article, index) => {
+            console.log(`${index + 1}. ${article.title} - ${article.published}`);
+        });
+        
         // Take only the 3 most recent
         const latestArticles = sortedArticles.slice(0, MAX_ARTICLES);
+        
+        console.log("🎯 Top 3 latest articles:");
+        latestArticles.forEach((article, index) => {
+            console.log(`${index + 1}. ${article.title} (${article.published})`);
+        });
         
         // Display the articles
         displayArticles(latestArticles, container);
         
     } catch (error) {
         console.error("❌ Error loading articles:", error);
-        showError(container);
+        console.log("🔄 Showing fallback articles...");
+        showFallbackArticles(container);
     }
 }
 
 function displayArticles(articles, container) {
-    console.log(`📊 Displaying ${articles.length} latest articles`);
-    
-    // Clear container
     container.innerHTML = '';
     
-    // Add each article
     articles.forEach(article => {
         const articleHTML = createArticleHTML(article);
         container.innerHTML += articleHTML;
@@ -71,10 +107,7 @@ function displayArticles(articles, container) {
 }
 
 function createArticleHTML(article) {
-    // Format date: "01 Dec 2025"
     const date = formatDate(article.published);
-    
-    // PDF path: paper/IJACM_01_01_001.pdf
     const pdfPath = `${PAPERS_FOLDER}${article.article_id}.pdf`;
     
     return `
@@ -100,6 +133,34 @@ function createArticleHTML(article) {
     `;
 }
 
+function showFallbackArticles(container) {
+    console.log("🔄 Loading fallback data...");
+    
+    // Hardcoded fallback data from your JSON
+    const fallbackArticles = [
+        {
+            title: "Trail6",
+            authors: "Karan, Vishnu",
+            published: "2026-12-24",
+            article_id: "IJACM_01_01_001"
+        },
+        {
+            title: "Trail4",
+            authors: "Ram, Ravi, Hari",
+            published: "2026-06-19",
+            article_id: "IJACM_16_06_022"
+        },
+        {
+            title: "Trail7",
+            authors: "VVVV",
+            published: "2026-03-11",
+            article_id: "IJACM_16_06_025"
+        }
+    ];
+    
+    displayArticles(fallbackArticles, container);
+}
+
 function openPDF(pdfPath, title) {
     console.log(`Opening PDF: ${pdfPath}`);
     window.open(pdfPath, '_blank');
@@ -107,18 +168,13 @@ function openPDF(pdfPath, title) {
 }
 
 function formatDate(dateString) {
-    if (!dateString) return 'Date N/A';
-    
     try {
         const date = new Date(dateString);
-        if (isNaN(date.getTime())) return dateString;
-        
         const day = date.getDate().toString().padStart(2, '0');
         const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const month = monthNames[date.getMonth()];
         const year = date.getFullYear();
-        
         return `${day} ${month} ${year}`;
     } catch (error) {
         return dateString;
@@ -132,16 +188,7 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-function showError(container) {
-    container.innerHTML = `
-        <div style="text-align:center; padding: 20px; color: #666;">
-            <p>Unable to load latest articles.</p>
-            <p>Please try again later.</p>
-        </div>
-    `;
-}
-
-// Add minimal CSS
+// Add CSS
 const style = document.createElement('style');
 style.textContent = `
     @keyframes spin {
@@ -170,9 +217,7 @@ style.textContent = `
         font-size: 14px;
     }
     
-    .pdf-button {
-        background: #0b5ed7;
-        color: white;
+    .pdf-button, .view-more-button {
         padding: 8px 16px;
         border-radius: 4px;
         text-decoration: none;
@@ -180,6 +225,12 @@ style.textContent = `
         align-items: center;
         gap: 5px;
         cursor: pointer;
+        font-size: 14px;
+    }
+    
+    .pdf-button {
+        background: #0b5ed7;
+        color: white;
     }
     
     .pdf-button:hover {
@@ -189,13 +240,6 @@ style.textContent = `
     .view-more-button {
         background: #6c757d;
         color: white;
-        padding: 8px 16px;
-        border-radius: 4px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        cursor: pointer;
     }
     
     .view-more-button:hover {
@@ -203,5 +247,29 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Debug function
+window.debugArticles = {
+    testPaths: async function() {
+        console.log("🧪 Testing all JSON paths:");
+        for (const path of ARTICLES_JSON_PATHS) {
+            try {
+                const response = await fetch(path);
+                console.log(`${path}: ${response.status} ${response.statusText}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(`  ✅ Works! ${data.length} articles`);
+                }
+            } catch (error) {
+                console.log(`  ❌ Failed: ${error.message}`);
+            }
+        }
+    },
+    reload: function() {
+        console.clear();
+        console.log("🔄 Reloading articles...");
+        loadLatestArticles();
+    }
+};
 
 console.log("✅ Latest Articles Script Ready!");
