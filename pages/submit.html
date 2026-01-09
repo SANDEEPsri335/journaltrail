@@ -509,56 +509,55 @@
             });
         }
         
-function showSuccessMessage(paperId) {
+
+   function showSuccessMessage(paperId) {
     const container = document.getElementById('submissionContainer');
     container.innerHTML = `
-        <div class="success-container">
-            <div class="success-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
+        <div style="text-align: center; padding: 30px;">
+            <!-- Green checkmark -->
+            <div style="font-size: 4rem; color: #4caf50; margin-bottom: 20px;">✓</div>
             
-            <h2 class="success-title">Submission Successful!</h2>
+            <!-- Success title -->
+            <h2 style="color: white; font-size: 2rem; margin-bottom: 30px;">
+                Submission Successful!
+            </h2>
             
-            <div class="paper-id-box">
-                <div class="paper-id-label">Your Paper Reference ID:</div>
-                <div class="paper-id-value">${paperId}</div>
-                <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;">
-                    File saved as: <strong>${paperId}_[your-file-name]</strong>
+            <!-- Paper ID box -->
+            <div style="background: rgba(0, 176, 255, 0.1); padding: 20px; border-radius: 10px; margin: 25px auto; max-width: 500px; border-left: 4px solid #00b0ff;">
+                <div style="font-size: 1rem; color: #b0bec5; margin-bottom: 8px;">
+                    Your Paper Reference ID:
+                </div>
+                <div style="font-size: 1.8rem; color: #00b0ff; font-weight: bold; font-family: monospace; letter-spacing: 1px;">
+                    ${paperId}
                 </div>
             </div>
             
-            <div class="timeline">
-                <h3 style="color: var(--secondary); margin-bottom: 15px; text-align: left;">What Happens Next:</h3>
-                
-                <div class="timeline-item" style="padding-left: 0;">
-                    <strong>Immediate:</strong> Confirmation email sent to your inbox (check spam folder)
-                </div>
-                <div class="timeline-item" style="padding-left: 0;">
-                    <strong>Within 48 hours:</strong> Initial editorial check & paper ID assignment
-                </div>
-                <div class="timeline-item" style="padding-left: 0;">
-                    <strong>1-2 weeks:</strong> Peer review assignment
-                </div>
-                <div class="timeline-item" style="padding-left: 0;">
-                    <strong>4-6 weeks:</strong> Review process completion
+            <!-- Timeline - NO ICONS, SIMPLE TEXT -->
+            <div style="text-align: left; margin: 30px auto; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; max-width: 500px;">
+                <h3 style="color: #00b0ff; margin-bottom: 15px;">What Happens Next:</h3>
+                <div style="margin-bottom: 10px; color: white;"><strong>Immediate:</strong> Confirmation email sent to your inbox (check spam folder)</div>
+                <div style="margin-bottom: 10px; color: white;"><strong>Within 48 hours:</strong> Initial editorial check & paper ID assignment</div>
+                <div style="margin-bottom: 10px; color: white;"><strong>1-2 weeks:</strong> Peer review assignment</div>
+                <div style="margin-bottom: 0; color: white;"><strong>4-6 weeks:</strong> Review process completion</div>
+            </div>
+            
+            <!-- Important Notes - SIMPLE BULLET POINTS -->
+            <div style="background: rgba(255, 193, 7, 0.1); padding: 20px; border-radius: 10px; margin: 25px auto; max-width: 500px; border-left: 4px solid #ffc107;">
+                <h3 style="color: #ffc107; margin-bottom: 15px;">Important Notes:</h3>
+                <div style="text-align: left; color: white; line-height: 1.8;">
+                    <div style="margin-bottom: 8px;">• All correspondence: <strong>ijacmeditor@gmail.com</strong></div>
+                    <div style="margin-bottom: 8px;">• Quote your Paper ID (<strong>${paperId}</strong>) in all emails</div>
+                    <div style="margin-bottom: 0;">• Save this reference ID for tracking</div>
                 </div>
             </div>
             
-            <div class="notes-box">
-                <h3 style="color: #ffc107; margin-bottom: 15px; text-align: left;">Important Notes:</h3>
-                <ul>
-                    <li>All correspondence: <strong>ijacmeditor@gmail.com</strong></li>
-                    <li>Quote your Paper ID (<strong>${paperId}</strong>) in all emails</li>
-                    <li>Save this reference ID for tracking</li>
-                </ul>
-            </div>
-            
-            <!-- Only ONE button - Submit Another Paper -->
-            <button onclick="location.reload()" class="submit-another-btn">
+            <!-- ONLY ONE BUTTON - Submit Another Paper -->
+            <button onclick="location.reload()" style="padding: 12px 40px; background: linear-gradient(135deg, #00b0ff 0%, #2979ff 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 1rem; margin-top: 20px;">
                 Submit Another Paper
             </button>
             
-            <div class="contact-info">
+            <!-- Simple contact info at bottom -->
+            <div style="margin-top: 30px; color: #b0bec5; font-size: 0.9rem;">
                 Need help? Email: <strong>ijacmeditor@gmail.com</strong>
             </div>
         </div>
