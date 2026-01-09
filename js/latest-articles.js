@@ -5,7 +5,7 @@ console.log("📰 Latest Articles Script Starting...");
 const ARTICLES_JSON = '../data/articles.json';
 const MAX_RETRIES = 3;
 const MAX_ARTICLES_TO_SHOW = 3;
-const PAPERS_FOLDER = 'paper/'; // Change this to your actual papers folder
+const PAPER_FOLDER = 'paper/'; // Change this to your actual papers folder
 
 let isLoading = false;
 let retryCount = 0;
@@ -141,8 +141,8 @@ function getPdfPath(article) {
         return '#';
     }
     
-    // Simple path: papers/IJACM_01_01_001.pdf
-    const pdfPath = `${PAPERS_FOLDER}${articleId}.pdf`;
+    // Simple path: paper/IJACM_01_01_001.pdf
+    const pdfPath = `${PAPER_FOLDER}${articleId}.pdf`;
     console.log(`📄 PDF path for ${article.title}: ${pdfPath}`);
     
     return pdfPath;
