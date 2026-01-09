@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Current Issue - IJACM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords"
+    content="advanced computing, mechanical systems, engineering research, open access journal, peer reviewed, IJACM">
+  <meta name="description" content="Current Issue of IJACM. Explore the latest research in mechanical engineering and advanced computing.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* ================= GLOBAL STYLES ================= */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+    :root {
+      --primary: #1a237e;
+      --secondary: #00b0ff;
+      --accent: #ff4081;
+      --accent-yellow: #ffc107;
+      --bg-dark: #0b2c4d;
+      --bg-darker: #061a2f;
+      --text-light: #e6f0ff;
+      --text-muted: #90a4ae;
+      --white: #ffffff;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --gradient-secondary: linear-gradient(135deg, #00b0ff 0%, #2979ff 100%);
+      --radius-sm: 3px;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      line-height: 1.4;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+    }
+
+    main {
+      padding: 30px 20px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ================= CURRENT ISSUE HEADER ================= */
+    .current-issue-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .current-issue-header h1 {
+      font-size: 1.8rem;
+      color: var(--white);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .issue-info {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .issue-info span {
+      color: var(--accent-yellow);
+      font-weight: 500;
+    }
+
+    /* ================= ARTICLES GRID ================= */
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 992px) {
+      .articles-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 576px) {
+      .articles-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .article-card {
+      background: rgba(13, 27, 42, 0.5);
+      border-radius: 4px;
+      padding: 20px;
+      border-top: 3px solid var(--secondary);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .article-header {
+      font-size: 0.8rem;
+      color: var(--secondary);
+      margin-bottom: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .article-title {
+      font-size: 1rem;
+      color: var(--white);
+      margin-bottom: 15px;
+      font-weight: 500;
+      line-height: 1.3;
+      min-height: 40px;
+    }
+
+    .article-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 15px;
+      flex-grow: 1;
+    }
+
+    .meta-row {
+      display: flex;
+      margin-bottom: 6px;
+      align-items: flex-start;
+    }
+
+    .meta-label {
+      color: var(--text-muted);
+      min-width: 70px;
+      flex-shrink: 0;
+    }
+
+    .meta-value {
+      color: var(--text-light);
+    }
+
+    .meta-value a {
+      color: var(--secondary);
+      word-break: break-all;
+    }
+
+    .meta-value a:hover {
+      text-decoration: underline;
+    }
+
+    /* ================= ARTICLE FOOTER ================= */
+    .article-footer {
+      margin-top: auto;
+      padding-top: 15px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .view-paper-btn {
+      background: var(--gradient-secondary);
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      width: 100%;
+      text-align: center;
+    }
+
+    .view-paper-btn:hover {
+      box-shadow: 0 0 10px rgba(0, 176, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    /* ================= PAGINATION ================= */
+    .pagination-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .pagination {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .page-btn {
+      min-width: 32px;
+      height: 32px;
+      padding: 0 8px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-light);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+    }
+
+    .page-btn:hover {
+      background: rgba(0, 176, 255, 0.2);
+      border-color: var(--secondary);
+    }
+
+    .page-btn.active {
+      background: var(--gradient-secondary);
+      color: white;
+      border-color: transparent;
+    }
+
+    .page-btn.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .page-btn.disabled:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border-color);
+    }
+
+    /* ================= LOADING STATE ================= */
+    .loading-container {
+      text-align: center;
+      padding: 40px 20px;
+      grid-column: 1 / -1;
+    }
+
+    .loading-spinner {
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-top: 2px solid var(--secondary);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    .loading-text {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ================= NO ARTICLES STATE ================= */
+    .no-articles {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      grid-column: 1 / -1;
+    }
+
+    /* ================= RESPONSIVE ================= */
+    @media (max-width: 768px) {
+      main {
+        padding: 20px 15px 40px;
+      }
+      
+      .current-issue-header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .issue-info {
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .meta-row {
+        flex-direction: column;
+        gap: 2px;
+        margin-bottom: 8px;
+      }
+      
+      .meta-label {
+        min-width: auto;
+        margin-bottom: 2px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .article-card {
+        padding: 15px;
+      }
+      
+      .page-btn {
+        min-width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <div id="header-placeholder"></div>
+
+  <!-- ================= NAVBAR ================= -->
+  <div id="navbar-placeholder"></div>
+
+  <main>
+    <!-- Current Issue Header -->
+    <div class="current-issue-header">
+      <h1>Current Issue</h1>
+      <div class="issue-info">
+        <div>Total Papers: <span id="total-papers">Loading...</span></div>
+        <div>Volume: <span>Vol 1 Issue 1</span></div>
+        <div>Latest: <span id="latest-date">Loading...</span></div>
+      </div>
+    </div>
+
+    <!-- Articles Grid -->
+    <div class="articles-grid" id="articles-container">
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading articles...</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+      <div class="pagination" id="pagination">
+        <!-- Pagination will be generated by JavaScript -->
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts -->
+  <script src="../js/current-issue.js"></script>
+  <script src="../script.js"></script>
+</body>
+
+</html>

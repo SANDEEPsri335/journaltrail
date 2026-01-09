@@ -1,0 +1,111 @@
+[
+  {
+    "title": "Trail1",
+    "authors": "Sandeep",
+    "article_id": "IJACM_01_01_001",
+    "pages": "1-10",
+    "published": "2025-12-01",
+    "doi": "https://doi.org/10.1177/095440892110730",
+    "issue": "1"
+  },
+  {
+    "title": "Trail2",
+    "authors": "Hart, Megh",
+    "article_id": "IJACM_16_06_020",
+    "pages": "11-20",
+    "published": "2025-12-24",
+    "doi": "https://doi.org/10.1007/s40430-020-02750-3",
+    "issue": "1"
+  },
+  {
+    "title": "Trail3",
+    "authors": "Ram & Laxman",
+    "article_id": "IJACM_16_06_021",
+    "pages": "21-30",
+    "published": "2026-02-11",
+    "doi": "https://doi.org/10.1007/s40430-020-02750-4",
+    "issue": "1"
+  },
+  {
+    "title": "Trail4",
+    "authors": "Ram, Ravi, Hari",
+    "article_id": "IJACM_16_06_022",
+    "pages": "31-40",
+    "published": "2026-06-19",
+    "doi": "https://doi.org/10.1007/s40430-020-02750-5",
+    "issue": "1"
+  },
+  {
+    "title": "Trail5",
+    "authors": "Vishnu, Karan",
+    "article_id": "IJACM_16_06_023",
+    "pages": "41-50",
+    "published": "2025-10-01",
+    "doi": "https://doi.org/10.1007/s40430-020-02750-6",
+    "issue": "1"
+  },
+  {
+    "title": "Trail6",
+    "authors": "Karan, Vishnu",
+    "article_id": "IJACM_01_01_001",
+    "pages": "51-60",
+    "published": "2026-12-24",
+    "doi": "https://doi.org/10.1007/s40430-020-02750-7",
+    "issue": "1"
+  },
+  {
+    "title": "Trail7",
+    "authors": "VVVV",
+    "article_id": "IJACM_16_06_025",
+    "pages": "61-70",
+    "published": "2026-03-11",
+    "doi": "https://doi.org/10.1007/s40430-020-02750-8",
+    "issue": "1"
+  },
+
+  {
+    "title": "Trail10",
+    "authors": "Author10",
+    "article_id": "IJACM_16_06_028",
+    "pages": "91-100",
+    "published": "2025-01-15",
+    "doi": "https://doi.org/10.1007/s40430-020-02750-11",
+    "issue": "1"
+  },
+  {
+    "title": "Trail11",
+    "authors": "Author11",
+    "article_id": "IJACM_16_06_029",
+    "pages": "101-110",
+    "published": "2025-01-16",
+    "doi": "https://doi.org/10.1007/s40430-020-02750-12",
+    "issue": "1"
+  },
+  {
+    "title": "Trail12",
+    "authors": "Author12",
+    "article_id": "IJACM_16_06_030",
+    "pages": "111-120",
+    "published": "2025-01-17",
+    "doi": "https://doi.org/10.1007/s40430-020-02750-13",
+    "issue": "1"
+  },
+  {
+    "title": "Trail13",
+    "authors": "Author13",
+    "article_id": "IJACM_16_06_031",
+    "pages": "121-130",
+    "published": "2025-01-18",
+    "doi": "https://doi.org/10.1007/s40430-020-02750-14",
+    "issue": "1"
+  },
+  {
+    "title": "Trail14",
+    "authors": "Author14",
+    "article_id": "IJACM_16_06_025",
+    "pages": "131-140",
+    "published": "2025-01-19",
+    "doi": "https://doi.org/10.1007/s40430-020-02750-15",
+    "issue": "1"
+  }
+]
