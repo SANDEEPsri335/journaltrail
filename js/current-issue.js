@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function getFallbackArticles() {
         return [
-           {
+         <!--  {
                 "title": "Paper 1",
                 "authors": "Author A",
                 "article_id": "IJACM_01",
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 "published": "2025-01-03",
                 "doi": "https://doi.org/3",
                 "issue": "1"
-            }
+            } -->
         ];
     }
     
